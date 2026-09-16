@@ -60,7 +60,17 @@ export default class ArmWrestleScene {
     this.baseCameraZ = this._computeCameraZ(this.width, this.height);
     this.baseCameraY = 2.15;
     this.cameraLookY = 1.5;
-    this.camera.position.set(0, this.baseCameraY, this.baseCameraZ);
+    // rotates the settled (showcase-over/no-drag) front view partway toward
+    // the front arm's own yaw (armsBaseYaw, ~69deg) so the shot looks more
+    // along the length of its upper arm instead of square across it. This is
+    // a fraction of armsBaseYaw, not the full angle -- going all the way
+    // turns into a side view and loses the clasped fists. Tune by eye.
+    this.frontArmYawOffset = THREE.MathUtils.degToRad(22);
+    this.camera.position.set(
+      Math.sin(this.frontArmYawOffset) * this.baseCameraZ,
+      this.baseCameraY,
+      Math.cos(this.frontArmYawOffset) * this.baseCameraZ
+    );
     this.camera.lookAt(0, this.cameraLookY, 0);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -178,11 +188,14 @@ export default class ArmWrestleScene {
     this.ambient = new THREE.AmbientLight(0x2a4a66, 1.4);
     scene.add(this.ambient);
 
-    this.playerLight = new THREE.PointLight(this.playerColor, 55, 12);
+    // neutral white now (was tinted player/opponent color) -- that colored
+    // the arm's own shaded side blue/red instead of a natural shadow;
+    // intensity still swings with dominance in _animate, just no color tint
+    this.playerLight = new THREE.PointLight(0xffffff, 55, 12);
     this.playerLight.position.set(-2.6, 2.6, 2.4);
     scene.add(this.playerLight);
 
-    this.opponentLight = new THREE.PointLight(this.opponentColor, 55, 12);
+    this.opponentLight = new THREE.PointLight(0xffffff, 55, 12);
     this.opponentLight.position.set(2.6, 2.6, 2.4);
     scene.add(this.opponentLight);
 
@@ -730,12 +743,14 @@ export default class ArmWrestleScene {
   }
 
   _computeCameraZ(width, height) {
-    if (width >= 768) return 4.2;
+    // slight zoom-in on top of the base framing -- <1 pulls the camera closer
+    const zoom = 0.92;
+    if (width >= 768) return 4.2 * zoom;
     const aspect = width / (height || 1);
     // 0.5 = a typical tall phone (e.g. 390x844); back off further the
     // narrower/taller it gets, capped so it never runs away on odd sizes
     const narrowBoost = Math.max(0, 0.62 - aspect) * 3.2;
-    return Math.min(6.4, 5.0 + narrowBoost);
+    return Math.min(6.4, 5.0 + narrowBoost) * zoom;
   }
 
   _onResize() {
@@ -883,7 +898,11 @@ export default class ArmWrestleScene {
     // KEPT once they let go (no easing back to center), so the arena stays
     // where they left it instead of snapping back to front-on every time.
 
-    const totalAngle = this.orbitAngle + this.manualAngle + Math.atan2(this.driftX, this.camRadius);
+    const totalAngle =
+      this.orbitAngle +
+      this.manualAngle +
+      this.frontArmYawOffset +
+      Math.atan2(this.driftX, this.camRadius);
 
     this.camera.position.x = Math.sin(totalAngle) * this.camRadius;
     this.camera.position.z = Math.cos(totalAngle) * this.camRadius;

@@ -1,13 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import CinematicIntro from "../../components/CinematicIntro";
 import "../arena.css";
 import { setBackButtonUrl } from '../uiSlice';
 import { useThemeColors } from '../../functions/useThemeColors';
 import { getDvSourceImageUrl } from '../../functions/themeAssets';
-
-const INTRO_SEEN_KEY = "aoa_seen_landing_intro";
 
 export default function MainMenu() {
   const navigate = useNavigate();
@@ -26,28 +23,9 @@ export default function MainMenu() {
     () => (themeData?.logo ? getDvSourceImageUrl(themeData.logo) : null),
     [themeData]
   );
-  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem(INTRO_SEEN_KEY));
-
-  const dismissIntro = () => {
-    sessionStorage.setItem(INTRO_SEEN_KEY, "1");
-    setShowIntro(false);
-  };
   useEffect(() => {
     dispatch(setBackButtonUrl("/login?&save=true"));
   }, [status, user]);
-
-  if (showIntro) {
-    return (
-      <CinematicIntro
-        eyebrow="Welcome to"
-        title="Arena of Arms"
-        subtitle="Tap. Push. Overpower."
-        accentColor="#ff4d4d"
-        autoAdvanceMs={3200}
-        onDone={dismissIntro}
-      />
-    );
-  }
 
   return (
     <div className="aoa-root aoa-root-menu" style={textStyle}>
