@@ -1,0 +1,123 @@
+.modal-backdrop {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1000;
+}
+.csv-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 470px;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.csv-form-group {
+  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
+}
+.csv-file-btn {
+    padding: 0.5rem 1rem;
+    /* border: 1px solid #d83307; */
+    border-bottom: 1px dotted #999;
+    background: #fff;
+    color: #155dfc;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 3px dotted #bbb;
+    width: 100%;
+    height: 75px;
+}
+.csv-file-name {
+  flex: 1; font-size: 0.9rem; color: #555;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.csv-file-input {
+  display: none;
+}
+.csv-actions {
+  display: flex; justify-content: flex-end; gap: 0.5rem; margin-top:10px;
+}
+.csv-cancel-btn,
+.csv-upload-btn {
+  padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer;
+  border: none;
+}
+.csv-cancel-btn {
+  background: #f5f5f5; color: #333; border: 1px solid #ccc;
+}
+.csv-upload-btn {
+    background: black;
+    color: #fff;
+    border-radius: 7px;
+}
+.csv-upload-btn:hover {
+  background: #b22b02;
+}
+.intro-switch-container {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.intro-switch-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.csv-upload-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+.file-preview {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+.file-preview img{
+  max-height: 250px;
+}
+
+.file-preview h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #505050;
+}
+
+.file-name {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.pdf-preview {
+    text-align: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.existing-file-section {
+  margin-top: 10px;
+}
+
+.file-preview img,.file-preview video{
+    width:100%;
+}
+
+.intro-switch-label{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 14px;
+}

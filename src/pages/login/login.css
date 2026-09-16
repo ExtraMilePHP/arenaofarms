@@ -1,0 +1,118 @@
+.login-logo1{
+    width: 31%;
+    margin-top: 110px;
+}
+
+a{
+    text-decoration: none;
+}
+.login-main-container{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.quiz-loader-container{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px; /* Reduced gap */
+    height: 60px;
+    border-bottom: 2px solid #ddd; /* X-axis */
+    padding-bottom: 5px;
+}
+
+.bar {
+    width: 10px;
+    height: 30px;
+    background-color: #4285F4; /* Blue */
+    border-radius: 5px 5px 0 0; /* Rounded top */
+    animation: bounce 0.6s ease-in-out infinite;
+}
+
+.bar:nth-child(2) {
+    background-color: #34A853; /* Green */
+    animation-delay: 0.2s;
+}
+
+.bar:nth-child(3) {
+    background-color: #FBBC05; /* Yellow */
+    animation-delay: 0.4s;
+}
+
+/* Matches the rules page's "Next" button (.user-next-button in rules.css) so
+   BEGIN PLAY and Next read as the same control across the two pages. */
+.begin-play-btn {
+    display: inline-block;
+    appearance: none;
+    padding: 0.65rem 2.5rem;
+    font-family: "Fira Sans", system-ui, sans-serif;
+    font-size: clamp(1.1rem, 3vw, 1.35rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-align: center;
+    /* Fallback when theme omits colors; inline styles from theme override */
+    color: #2a1f5c;
+    background-color: #ffd542;
+    /* Theme `button_color` / `button_Textcolor` set inline from login.jsx */
+    border: none;
+    border-radius: 999px;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.begin-play-btn:hover {
+    filter: brightness(1.06);
+}
+
+.begin-play-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.begin-play-btn:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+
+@keyframes bounce {
+    0%, 100% {
+        height: 30px;
+    }
+    50% {
+        height: 60px;
+    }
+}
+
+
+
+@media (max-width: 768px) {
+    .login-logo1{
+        width: 100%;
+        margin-top: 100px;
+    }
+    .begin-play-btn{
+        padding: 0.55rem 2rem;
+    }
+  }
+
+  @media screen and (max-width:950px) {
+    @media all and (orientation:landscape) {
+        .login-logo1{
+            width: 31%;
+            margin-top: 0px;
+        }
+    }}

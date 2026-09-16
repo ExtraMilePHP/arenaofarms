@@ -1,0 +1,866 @@
+.pf-climb-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  /* Stops mobile browsers from treating swipes over the game (especially
+     near the touch controls at the bottom) as a page scroll/pull-to-refresh
+     gesture. */
+  touch-action: none;
+  overscroll-behavior: none;
+  /* background: linear-gradient(180deg, #8fd0ff 0%, #cfe9ff 55%, #eaf6ff 100%); */
+  color: #fff;
+  /* font-family: "Segoe UI", Arial, sans-serif; */
+}
+
+/* Play area fills the entire space below the header, edge to edge, all the
+   way down to the bottom of the viewport — no centered margins. */
+.pf-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 320px;
+  min-height: 420px;
+  overflow: hidden;
+}
+
+.pf-climb-canvas-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.pf-climb-canvas-wrap canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Covers the stage until the Phaser scene has built the world AND every
+   player gif has finished decoding, so nothing pops in mid-load. */
+.pf-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #0b1220;
+  color: #dfe6f5;
+  font-weight: 600;
+}
+
+.pf-loader-spinner {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 213, 66, 0.25);
+  border-top-color: #ffd542;
+  animation: pf-loader-spin 0.8s linear infinite;
+}
+
+@keyframes pf-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Full-screen gate overlays (home / intro / howto / results / leaderboard) ---------- */
+.pf-gate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 24px;
+  text-align: center;
+  z-index: 20;
+}
+
+.pf-gate--dim {
+  background: rgba(20, 12, 6, 0.55);
+  pointer-events: auto;
+}
+
+.pf-gate h1 {
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  margin: 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffd542;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.pf-gate p {
+  max-width: 520px;
+  margin: 0;
+  line-height: 1.5;
+  color: #dfe6f5;
+}
+
+.pf-victory-gif {
+  display: block;
+  width: 140px;
+  height: auto;
+  margin: 0 auto 16px;
+}
+
+.pf-gate-panel {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 213, 66, 0.35);
+  border-radius: 14px;
+  padding: 24px 28px;
+  max-width: 560px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Controls / How-to card — matches quiz parchment + platform look. */
+.pf-controls-card {
+  position: relative;
+  background: linear-gradient(180deg, #f4e4c4 0%, #e8d0a0 100%);
+  border: 3px solid #1a120b;
+  border-radius: 14px;
+  padding: clamp(20px, 4vw, 28px) clamp(16px, 4vw, 24px);
+  max-width: 420px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow:
+    0 4px 0 #3d2112,
+    0 14px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: #2a1a0e;
+  text-align: left;
+}
+
+.pf-controls-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  border-radius: 11px 11px 0 0;
+  background: linear-gradient(180deg, #a2d149 0%, #6fa32e 70%, #567d2a 100%);
+  border-bottom: 2px solid #3d5c1a;
+  pointer-events: none;
+}
+
+.pf-controls-title {
+  margin: 8px 0 16px !important;
+  text-align: center;
+  font-size: clamp(1.35rem, 4vw, 1.75rem) !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #2a1a0e !important;
+  text-shadow: none !important;
+}
+
+.pf-btn {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  background: linear-gradient(180deg, #ffd542, #f2a900);
+  color: #241a00;
+  box-shadow: 0 4px 0 #a06f00, 0 8px 18px rgba(0, 0, 0, 0.4);
+  transition: filter 0.15s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.pf-btn:hover {
+  filter: brightness(1.06);
+}
+
+.pf-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #a06f00, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.pf-btn:focus-visible {
+  outline: 2px solid #ffd542;
+  outline-offset: 3px;
+}
+
+.pf-btn-secondary {
+  background: linear-gradient(180deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  color: #fff;
+  border: 2px solid #1a120b;
+  box-shadow: 0 4px 0 #3d2112, 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+.pf-btn-secondary:focus-visible {
+  outline-color: #ffd542;
+}
+
+.pf-btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pf-howto-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.pf-howto-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(101, 57, 31, 0.1);
+  border: 2px solid rgba(26, 18, 11, 0.35);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.pf-howto-keys {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.pf-howto-keys kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 2px solid #1a120b;
+  background: linear-gradient(180deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 0 #3d2112;
+  font-family: inherit;
+}
+
+.pf-howto-text {
+  flex: 1;
+  font-size: clamp(0.85rem, 3vw, 0.95rem);
+  line-height: 1.35;
+  color: #2a1a0e;
+  font-weight: 600;
+}
+
+.pf-howto-text strong {
+  color: #65391f;
+}
+
+@media (max-width: 400px) {
+  .pf-controls-card {
+    padding: 18px 12px 16px;
+  }
+
+  .pf-howto-list li {
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .pf-howto-keys kbd {
+    min-width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ---------- HUD (overlaid on top of the Phaser canvas while playing) ---------- */
+.pf-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Sits below the app's fixed header (logo + back button) instead of under
+   it — the header publishes its real rendered height as --pf-header-h. */
+.pf-hud-topbar {
+  position: absolute;
+  top: calc(var(--pf-header-h, 56px) + 12px);
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.pf-hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* The health row's vertical heart stack can grow taller than the icon
+   buttons next to it — align both to the top instead of vertically
+   centering the icons against a tall, growing stack. */
+.pf-hud-row--top {
+  align-items: flex-start;
+}
+
+.pf-health {
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  gap: 4px;
+  max-width: 70%;
+  pointer-events: none;
+}
+
+/* Glossy heart icon, drawn as an inline SVG (proper heart path, upright/
+   vertical orientation) instead of the old rotated-square-plus-circles CSS
+   trick — that read as flat/plain at this size. Gradient fill + a small
+   highlight ellipse give it the glassy, lit-from-above look; the drop-shadow
+   glow makes filled hearts pop against the sky backdrop. */
+.pf-heart {
+  width: 16px;
+  height: 16px;
+  margin: 2px 3px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ff8a8a'/%3E%3Cstop offset='45%25' stop-color='%23e23b3b'/%3E%3Cstop offset='100%25' stop-color='%23901f1f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' stroke='%235c1414' stroke-width='0.6' d='M12,21.35l-1.45-1.32C5.4,15.36,2,12.28,2,8.5C2,5.42,4.42,3,7.5,3c1.74,0,3.41,0.81,4.5,2.09C13.09,3.81,14.76,3,16.5,3C19.58,3,22,5.42,22,8.5c0,3.78-3.4,6.86-8.55,11.54L12,21.35z'/%3E%3Cellipse cx='8.4' cy='7.4' rx='2.3' ry='1.3' fill='%23ffffff' opacity='0.55' transform='rotate(-30 8.4 7.4)'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 3px rgba(226, 59, 59, 0.55));
+}
+
+.pf-heart.is-empty {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='gg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8b8b8'/%3E%3Cstop offset='45%25' stop-color='%23888888'/%3E%3Cstop offset='100%25' stop-color='%234d4d4d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23gg)' stroke='%232e2e2e' stroke-width='0.6' d='M12,21.35l-1.45-1.32C5.4,15.36,2,12.28,2,8.5C2,5.42,4.42,3,7.5,3c1.74,0,3.41,0.81,4.5,2.09C13.09,3.81,14.76,3,16.5,3C19.58,3,22,5.42,22,8.5c0,3.78-3.4,6.86-8.55,11.54L12,21.35z'/%3E%3C/svg%3E");
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+  opacity: 0.85;
+}
+
+.pf-hud-stat {
+  /* Matches level1 platform dirt browns (p1/p2/p3 rock body). */
+  background: linear-gradient(180deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  border: 2px solid #1a120b;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 2px 0 #3d2112, 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.pf-hud-icons {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+  pointer-events: auto;
+}
+
+.pf-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #1a120b;
+  /* Same brown platform dirt as time/points HUD pills. */
+  background: linear-gradient(180deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 0 #3d2112, 0 4px 10px rgba(0, 0, 0, 0.35);
+  transition: filter 0.12s ease, transform 0.08s ease;
+}
+
+.pf-icon-btn:hover {
+  filter: brightness(1.08);
+}
+
+.pf-icon-btn:active {
+  transform: scale(0.94);
+}
+
+.pf-icon-btn:focus-visible {
+  outline: 2px solid #ffd542;
+  outline-offset: 2px;
+}
+
+/* Vertical quiz-progress bar, pinned to the right edge and vertically
+   centered — fills bottom-to-top as questions get answered (correct or
+   wrong both count), independent of pf-hud-stat's climb-height PROGRESS. */
+.pf-progress-vert {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.pf-progress-vert-track {
+  width: 20px;
+  height: min(46vh, 280px);
+  border-radius: 999px;
+  border: 2px solid #1a120b;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 0 #3d2112, 0 4px 10px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.pf-progress-vert-fill {
+  width: 100%;
+  background: linear-gradient(0deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  border-radius: inherit;
+  transition: height 0.25s ease;
+}
+
+.pf-progress-vert-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #000;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.pf-touch-controls {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  display: none;
+  justify-content: space-between;
+  padding: 0 12px;
+  pointer-events: none;
+}
+
+/* Two separate checks, either one is enough to count as a touch device —
+   `pointer: coarse` alone misses some real phones/tablets that report a
+   fine primary pointer (stylus-capable devices, some Android WebViews), and
+   `hover: none` alone misses coarse-but-hoverable inputs; together they
+   reliably cover touch devices without depending on viewport width (which
+   would also wrongly match a narrow desktop browser window). */
+@media (pointer: coarse), (hover: none) {
+  .pf-touch-controls {
+    display: flex;
+  }
+}
+
+.pf-touch-controls.is-hidden {
+  display: none;
+}
+
+.pf-touch-side {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.pf-touch-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 2px solid #1a120b;
+  /* Same brown platform dirt as HUD stats / icon buttons. */
+  background: linear-gradient(180deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 2px 0 #3d2112, 0 4px 10px rgba(0, 0, 0, 0.35);
+  user-select: none;
+  -webkit-user-select: none;
+  /* Without this, mobile browsers can delay/steal the press to decide
+     whether it's a scroll/zoom gesture instead, and a long press can pop up
+     a text-selection/callout menu over the button — both make the controls
+     feel unresponsive or interrupt play. */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  cursor: pointer;
+  transition: filter 0.12s ease, transform 0.08s ease;
+}
+
+.pf-touch-btn--jump {
+  width: 68px;
+  height: 68px;
+  font-size: 1.5rem;
+}
+
+.pf-touch-btn:active {
+  filter: brightness(0.9);
+  transform: scale(0.94);
+}
+
+/* Narrow phones — trim HUD chrome so it doesn't crowd the play area, but
+   keep the touch buttons themselves big (per player feedback the old,
+   smaller-still sizing here made them fiddly to hit reliably). */
+@media (max-width: 400px) {
+  .pf-touch-controls {
+    bottom: 8px;
+    padding: 0 8px;
+  }
+
+  .pf-touch-side {
+    gap: 6px;
+  }
+
+  .pf-touch-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.05rem;
+  }
+
+  .pf-touch-btn--jump {
+    width: 58px;
+    height: 58px;
+    font-size: 1.2rem;
+  }
+
+  .pf-hud-stat {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+  }
+
+  .pf-icon-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .pf-progress-vert-track {
+    height: min(38vh, 210px);
+  }
+
+  .pf-progress-vert-label {
+    font-size: 0.62rem;
+  }
+}
+
+/* Landscape phones/tablets (short viewport height) — the portrait HUD
+   spacing (topbar offset, vertical heart stack, bottom control gap) eats too
+   much of the little vertical room left, and can crowd or clip the play
+   area. Tighten it up instead of leaving the desktop/portrait spacing to
+   overlap the canvas or run off-screen. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .pf-hud-topbar {
+    top: calc(var(--pf-header-h, 44px) + 6px);
+    left: 8px;
+    right: 8px;
+    gap: 4px;
+  }
+
+
+  .pf-heart {
+    width: 12px;
+    height: 12px;
+    margin: 1px 2px;
+  }
+
+  .pf-hud-stat {
+    padding: 3px 10px;
+    font-size: 0.8rem;
+  }
+
+  .pf-icon-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 0.75rem;
+  }
+
+  .pf-touch-controls {
+    bottom: 6px;
+    padding: 0 10px;
+  }
+
+  .pf-touch-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+  }
+
+  .pf-touch-btn--jump {
+    width: 54px;
+    height: 54px;
+    font-size: 1.15rem;
+  }
+
+  .pf-progress-vert-track {
+    height: min(60vh, 165px);
+  }
+}
+
+/* ---------- Quiz + Feedback overlays ---------- */
+.pf-quiz-overlay,
+.pf-feedback-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 12, 6, 0.55);
+  padding: 16px;
+}
+
+.pf-quiz-card,
+.pf-feedback-card {
+  position: relative;
+  /* Warm parchment panel — reads like a wooden game sign, not a dark modal. */
+  background: linear-gradient(180deg, #f4e4c4 0%, #e8d0a0 100%);
+  border: 3px solid #1a120b;
+  border-radius: 14px;
+  padding: clamp(18px, 4vw, 26px);
+  max-width: 380px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow:
+    0 4px 0 #3d2112,
+    0 14px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  font-family: "Fira Sans", system-ui, sans-serif;
+  color: #2a1a0e;
+}
+
+/* Grass strip across the top edge — echoes platform tops in the climb. */
+.pf-quiz-card::before,
+.pf-feedback-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  border-radius: 11px 11px 0 0;
+  background: linear-gradient(180deg, #a2d149 0%, #6fa32e 70%, #567d2a 100%);
+  border-bottom: 2px solid #3d5c1a;
+  pointer-events: none;
+}
+
+.pf-quiz-category {
+  display: inline-block;
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #f4e4c4;
+  background: linear-gradient(180deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  border: 2px solid #1a120b;
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin: 6px 0 12px;
+}
+
+.pf-quiz-question {
+  font-size: clamp(1rem, 3.6vw, 1.2rem);
+  font-weight: 700;
+  margin: 8px 0 16px;
+  line-height: 1.4;
+  color: #2a1a0e;
+  text-shadow: none;
+}
+
+.pf-quiz-image {
+  display: block;
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #1a120b;
+  margin-bottom: 14px;
+}
+
+.pf-quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pf-quiz-option {
+  text-align: left;
+  min-height: 44px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 2px solid #1a120b;
+  background: linear-gradient(180deg, #b5651d 0%, #965a38 55%, #65391f 100%);
+  color: #fff;
+  cursor: pointer;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  font-weight: 600;
+  line-height: 1.35;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 3px 0 #3d2112;
+  transition: filter 0.12s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.pf-quiz-option:hover {
+  filter: brightness(1.1);
+}
+
+.pf-quiz-option:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #3d2112;
+}
+
+/* Chrome gives a clicked <button> lasting keyboard-style focus, which without
+   this doubles up with the :hover border above as a boxy ring around
+   whichever option was last clicked. Keyboard users still get a visible ring
+   via :focus-visible. */
+.pf-quiz-option:focus {
+  outline: none;
+}
+
+.pf-quiz-option:focus-visible {
+  outline: 2px solid #ffd542;
+  outline-offset: 2px;
+}
+
+/* Text Input question type — free-text answer box + submit button in place
+   of the option list, matching the option buttons' sizing/spacing. */
+.pf-quiz-text-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pf-quiz-text-input {
+  min-height: 44px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 2px solid #1a120b;
+  background: #fff;
+  color: #1a120b;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  font-weight: 600;
+}
+
+.pf-quiz-text-input:focus-visible {
+  outline: 2px solid #ffd542;
+  outline-offset: 2px;
+}
+
+.pf-quiz-text-submit:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.4) brightness(0.85);
+}
+
+.pf-feedback-card.is-correct {
+  border-color: #3d5c1a;
+}
+
+.pf-feedback-card.is-wrong {
+  border-color: #8b1e1e;
+}
+
+.pf-feedback-title {
+  font-size: clamp(1.1rem, 3.6vw, 1.3rem);
+  font-weight: 800;
+  margin: 8px 0 8px;
+}
+
+.pf-feedback-card p {
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  line-height: 1.4;
+  color: #2a1a0e;
+}
+
+.pf-feedback-card.is-correct .pf-feedback-title {
+  color: #2f6b1f;
+}
+
+.pf-feedback-card.is-wrong .pf-feedback-title {
+  color: #a82020;
+}
+
+.pf-feedback-continue {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.pf-feedback-intel {
+  background: rgba(101, 57, 31, 0.12);
+  border: 1px solid rgba(101, 57, 31, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  margin: 10px 0 16px;
+  line-height: 1.4;
+  color: #2a1a0e;
+}
+
+/* ---------- Results ---------- */
+.pf-results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.pf-results-stat {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.pf-results-stat .val {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffd542;
+}
+
+.pf-results-stat .lbl {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #b7c1d6;
+}
+
+.pf-name-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.pf-leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  max-height: 50vh;
+}
+
+.pf-leaderboard-table th,
+.pf-leaderboard-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pf-leaderboard-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+}

@@ -1,0 +1,54 @@
+/* Global app font — Google "Fira Sans" linked from public/index.html */
+:root {
+  --text-color: #000000;
+  --ui-color-1: #000000;
+  --ui-color-2: #fa6321;
+  --option-color: #fb9905;
+  --option-text-color: #ffffff;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* Default body style */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /* height: 100%; */
+}
+
+body {
+  background: none;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+  background-attachment: fixed;
+  font-family: "Fira Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  font-family: "Fira Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body.common-bg {
+  background-color: #ffffff;
+  /* background: url("img/background.jpg"); */
+  background-attachment: fixed;
+  background-size: cover !important;
+  background-repeat: no-repeat;
+}
+
+/* Media queries for mobile-specific backgrounds */
+@media (max-width: 768px) {
+  body.common-bg {
+    /* background: url("img/mob.jpg"); */
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-size: cover !important;
+    background-attachment: fixed;
+  }
+}

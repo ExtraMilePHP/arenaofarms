@@ -1,0 +1,355 @@
+.rules-page-new {
+  padding: 20px;
+  min-height: 100vh;
+  background: #f5f7fa;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rules-php-layout {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  padding: 0 20px;
+}
+
+.rules-php-col {
+  flex: 1;
+  min-width: 0;
+  max-width: 50%;
+}
+
+.rules-php-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.rules-php-card-body {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
+}
+
+.rules-php-card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rules-php-card-body::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.rules-php-card-body::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+.rules-php-card-body::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+.rules-php-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.themeupdate-rules-repeater {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.themeupdate-rule-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.rules-php-repeater-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.rules-php-textarea,
+.rules-php-repeater-textarea {
+  flex: 1;
+  min-height: 50px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1f2937;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.rules-php-textarea:focus,
+.rules-php-repeater-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.themeupdate-btn-danger {
+  background: #fef2f2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  min-width: 38px;
+  height: 38px;
+}
+
+.themeupdate-btn-danger:hover {
+  background: #fee2e2;
+  transform: translateY(-1px);
+}
+
+.themeupdate-add-rule {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.rules-php-marks-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.rules-php-marks-row:first-of-type {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.rules-php-marks-label {
+  flex: 1;
+  min-width: 160px;
+  font-size: 14px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.rules-php-number {
+  max-width: 120px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1f2937;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.rules-php-number:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.rules-php-color-row {
+  align-items: center;
+}
+
+.rules-php-color-input {
+  width: 80px !important;
+  height: 44px !important;
+  padding: 4px !important;
+  border: 2px solid #d1d5db !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.rules-php-color-input:hover {
+  border-color: #667eea !important;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15) !important;
+}
+
+.rules-php-layout--single {
+  margin-top: 24px;
+}
+
+.rules-php-card--full {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.rules-php-popup-textarea {
+  width: 100%;
+  min-height: 120px;
+  box-sizing: border-box;
+}
+
+.rules-action-holder {
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  /* gap: 12px; */
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+  /* padding: 24px; */
+}
+
+.save-and-continue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.save-and-continue:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.save-and-continue:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 1200px) {
+  .rules-php-layout {
+    padding: 0 16px;
+  }
+
+  .rules-php-col {
+    max-width: 100%;
+  }
+
+  .rules-php-card-body {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .rules-page-new {
+    padding: 12px;
+  }
+
+  .rules-php-layout {
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 12px;
+  }
+
+  .rules-php-col {
+    max-width: 100%;
+  }
+
+  .rules-php-card-body {
+    padding: 20px;
+    max-height: none;
+  }
+
+  .rules-php-marks-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .rules-php-marks-label {
+    min-width: auto;
+  }
+
+  .rules-php-number,
+  .rules-php-color-input {
+    max-width: 100%;
+  }
+
+  .themeupdate-rule-row {
+    gap: 8px;
+  }
+
+  .rules-php-textarea,
+  .rules-php-repeater-textarea {
+    min-height: 45px;
+  }
+
+  .themeupdate-btn-danger {
+    min-width: 36px;
+    height: 36px;
+    padding: 6px 10px;
+  }
+}
+
+/* Legacy rules from original file - keeping for compatibility */
+.rule-page {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  padding-top: 100px;
+  border-collapse: separate;
+  border-spacing: 50px 0;
+}
+
+.custom-rules-container,
+.custom-toogle-container {
+  display: table-cell;
+  vertical-align: top;
+  width: 35%;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.rules-continue-outline {
+  background: transparent !important;
+  color: #667eea !important;
+  border: 2px solid #667eea !important;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.rules-continue-outline:hover {
+  background: #667eea !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}

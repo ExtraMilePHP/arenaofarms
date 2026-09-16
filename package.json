@@ -1,0 +1,66 @@
+{
+  "name": "Arena of Arms",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.1",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@reduxjs/toolkit": "^2.8.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.7",
+    "chart.js": "^4.4.6",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "emoji-mart": "^5.6.0",
+    "emoji-picker-react": "^4.12.0",
+    "encoding-japanese": "^2.2.0",
+    "firebase": "^10.13.2",
+    "he": "^1.2.0",
+    "iconv-lite": "^0.7.0",
+    "iconv-lite-umd": "^0.6.10",
+    "jsonwebtoken": "^9.0.2",
+    "phaser": "^4.2.1",
+    "react": "^18.3.1",
+    "react-data-table-component": "^7.7.0",
+    "react-dom": "^18.3.1",
+    "react-fast-marquee": "^1.6.5",
+    "react-modal": "^3.16.3",
+    "react-modal-video": "^2.0.2",
+    "react-player": "^2.16.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^6.26.2",
+    "react-scripts": "5.0.1",
+    "react-switch": "^7.1.0",
+    "sweetalert2": "^11.19.1",
+    "three": "^0.185.1",
+    "video.js": "^8.17.4",
+    "videojs-flash": "^2.2.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

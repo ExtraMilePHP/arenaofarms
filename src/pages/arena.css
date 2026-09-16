@@ -1,0 +1,975 @@
+.aoa-root {
+  min-height: 93vh;
+  width: 100%;
+  /* background: radial-gradient(ellipse at 50% 20%, #241a33 0%, #0b0912 65%, #060509 100%); */
+  color: #f4eefc;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 2rem 1rem;
+}
+
+.aoa-root * { box-sizing: border-box; }
+
+.aoa-title {
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 0.3rem;  text-shadow: 0 2px 12px rgba(26, 43, 107, 0.25);
+}
+
+.aoa-subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  letter-spacing: 0.5px;
+}
+
+.aoa-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(90vw, 360px);
+  margin-bottom: 2rem;
+}
+
+/* chunky "gummy-pill" 3D game buttons -- a solid un-blurred bottom lip
+   (box-shadow, same border-radius as the button so it reads as a rounded
+   puck underneath) gives the extruded look; a glossy top highlight sells
+   the rounded plastic/candy surface. Hover lifts the button off its base
+   (taller lip, more visible underside); pressing collapses the lip and
+   drops the button flush into it for a tactile push (mouse :active and
+   touch alike). */
+.aoa-btn {
+  position: relative;
+  border: none;
+  border-radius: 999px;
+  padding: 1rem 2rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.12s ease;
+}
+.aoa-btn::before {
+  /* glossy top-half sheen */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+.aoa-btn:hover { transform: translateY(-3px); }
+.aoa-btn:active { transform: translateY(4px); }
+.aoa-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.aoa-btn-primary {
+  /* background: linear-gradient(135deg, #ff7a1f, #e8432f);
+  box-shadow: 0 8px 0 #8a1717; */
+}
+.aoa-btn-primary:hover { box-shadow: 0 11px 0 #8a1717; }
+.aoa-btn-primary:active { box-shadow: 0 2px 0 #8a1717; }
+
+.aoa-btn-secondary {
+    /* background: linear-gradient(135deg, #ff7a1f, #e8432f);
+    box-shadow: 0 8px 0 #8a1717; */
+}
+.aoa-btn-secondary:hover { box-shadow: 0 11px 0 #8a1717; }
+.aoa-btn-secondary:active { box-shadow: 0 2px 0 #8a1717; }
+
+.aoa-btn-ghost {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
+}
+.aoa-btn-ghost:hover { background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.09)); box-shadow: 0 11px 0 rgba(0, 0, 0, 0.3); }
+.aoa-btn-ghost:active { box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3); }
+
+.aoa-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1.6rem;
+  width: min(92vw, 420px);
+  backdrop-filter: blur(6px);
+}
+
+.aoa-back {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  z-index: 20;
+  transform: translateY(0);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), 0 10px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), background 0.15s ease;
+}
+.aoa-back:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.09));
+  box-shadow: 0 7px 0 rgba(0, 0, 0, 0.35), 0 14px 20px rgba(0, 0, 0, 0.3);
+}
+.aoa-back:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Character select ------------------------------------------------------ */
+
+/* floating ambient glows + a faint receding floor grid behind the cards,
+   for depth without needing a real 3D scene here */
+.aoa-select-root { position: relative; overflow: hidden; }
+.aoa-select-glow {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.32;
+  pointer-events: none;
+  animation: aoa-glow-float 10s ease-in-out infinite;
+  z-index: 0;
+}
+.aoa-select-glow-a { top: -140px; left: -120px; background: #3ea6ff; }
+.aoa-select-glow-b { bottom: -160px; right: -130px; background: #ff4d4d; animation-delay: -5s; }
+@keyframes aoa-glow-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(28px, -18px) scale(1.08); }
+}
+.aoa-select-floor {
+  position: absolute;
+  left: 50%;
+  bottom: -10%;
+  width: 140%;
+  height: 45%;
+  transform: translateX(-50%) perspective(600px) rotateX(62deg);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 60% 100% at 50% 0%, #000 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 100% at 50% 0%, #000 40%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aoa-char-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: min(92vw, 460px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+.aoa-char-list-3d { perspective: 900px; }
+
+.aoa-char-card-wrap {
+  opacity: 0;
+  animation: aoa-card-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes aoa-card-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.aoa-char-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 1rem 1.4rem;
+  cursor: pointer;
+  text-align: left;
+  color: #fff;
+}
+
+/* exact same "gummy-pill" recipe as .aoa-btn / .aoa-btn-primary -- a solid
+   color-filled body, glossy top sheen, un-blurred bottom lip for the
+   extruded look, lift on hover, press flush on click -- just tinted per
+   card from --accent (each character's color) instead of a fixed palette.
+   Layered with a pointer-tracked 3D tilt (rotateX/rotateY come from
+   --rx/--ry, set live by the card's onMouseMove handler, so these rules are
+   the only ones that ever touch `transform` on the card itself). */
+.aoa-char-card-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(0);
+  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.12s ease;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 70%, white 30%), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black 30%));
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+}
+.aoa-char-card-3d::before {
+  /* glossy top-half sheen, same as .aoa-btn, plus a sheen that follows the cursor */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.25), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+.aoa-char-card-3d:hover {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px);
+  box-shadow: 0 11px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+}
+.aoa-char-card-3d:active {
+  transform: perspective(900px) rotateX(0deg) rotateY(0deg) translateY(4px) scale(0.98);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+}
+
+.aoa-char-avatar {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 3px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.35);
+  transform: translateZ(18px);
+}
+
+.aoa-char-info { flex: 1; transform: translateZ(10px); }
+.aoa-char-name { font-weight: 800; font-size: 1.05rem; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+.aoa-char-fighter { color: rgba(255, 255, 255, 0.85); font-size: 0.85rem; margin-top: 2px; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+.aoa-char-diff {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  transform: translateZ(24px);
+}
+
+/* Lobby */
+.aoa-lobby-code {
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  font-weight: 900;
+  letter-spacing: 10px;
+  text-align: center;
+  color: #fff;
+  margin: 0.6rem 0;
+  text-shadow: 0 0 30px rgba(62, 166, 255, 0.5);
+}
+.aoa-lobby-label {
+  text-align: center;
+  color: #b9aed0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.aoa-qr-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 1.2rem 0;
+}
+.aoa-qr {
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px;
+}
+.aoa-link-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.aoa-link-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  color: #fff;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aoa-code-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.9rem;
+  color: #fff;
+  font-size: 1.4rem;
+  text-align: center;
+  letter-spacing: 6px;
+  font-weight: 700;
+}
+.aoa-name-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.8rem;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+}
+.aoa-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+  width: min(92vw, 420px);
+}
+.aoa-tab {
+  flex: 1 1;
+    padding: 0.7rem;
+    text-align: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    font-weight: 700;
+    color: #18161d;
+    transform: translateY(0);
+    transition: transform 0.1s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.1s ease, background 0.15s ease, color 0.15s ease;
+    box-shadow: 0 4px 0 #7a6363, 0 10px 18px rgba(255, 77, 77, 0.3);
+}
+.aoa-tab:active { transform: translateY(3px); }
+.aoa-tab.active {
+  background: linear-gradient(135deg, #ff6b5c, #ff8a3e);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 0 #a11f1f, 0 10px 18px rgba(255, 77, 77, 0.3);
+}
+.aoa-tab.active:active { box-shadow: 0 1px 0 #a11f1f, 0 4px 10px rgba(255, 77, 77, 0.25); }
+.aoa-waiting-pulse {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3ea6ff;
+  margin-right: 8px;
+  animation: aoa-pulse 1s infinite ease-in-out;
+}
+@keyframes aoa-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.aoa-error {
+  color: #ff8a8a;
+  background: rgba(255, 77, 77, 0.12);
+  border: 1px solid rgba(255, 77, 77, 0.3);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  margin-top: 0.8rem;
+  text-align: center;
+}
+
+/* Battle screen */
+.aoa-battle {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100svh;
+  overflow: hidden;
+  /* background: radial-gradient(ellipse at 50% 15%, #6fe0ff 0%, #2196d8 32%, #0d4f8c 62%, #062544 100%); */
+}
+/* soft bokeh glow blobs behind the (transparent) 3D canvas, matching the
+   reference arena's glowing-light atmosphere */
+.aoa-battle::before,
+.aoa-battle::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+.aoa-battle::before {
+  width: 22vw;
+  height: 22vw;
+  top: 8%;
+  left: 10%;
+  background: radial-gradient(circle, #d6f9ff 0%, transparent 70%);
+}
+.aoa-battle::after {
+  width: 16vw;
+  height: 16vw;
+  top: 52%;
+  right: 8%;
+  background: radial-gradient(circle, #eafeff 0%, transparent 70%);
+}
+.aoa-canvas-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  touch-action: none;
+}
+.aoa-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  pointer-events: none;
+}
+.aoa-scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(0.6rem, 2.5vw, 1.25rem);
+}
+.aoa-score-box {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 14px;
+  padding: 0.6rem 1rem;
+  min-width: 130px;
+  max-width: min(44vw, 300px);
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+.aoa-score-name {
+  font-size: 1.05rem;
+  color: #d7cfe6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+.aoa-score-value { font-size: 2rem; font-weight: 900; }
+.aoa-score-box.player .aoa-score-value { color: #3ea6ff; }
+.aoa-score-box.opponent .aoa-score-value { color: #ff4d4d; }
+
+.aoa-meter-row {
+  --lead-color: #3ea6ff;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "ptag track otag"
+    "read read read";
+  align-items: center;
+  column-gap: 0.7rem;
+  row-gap: 0.35rem;
+  width: min(94vw, 640px);
+  margin: 0.3rem auto 0;
+  transform: translateY(-12px);
+}
+.aoa-meter-tag {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 110px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.aoa-meter-tag.player { grid-area: ptag; color: #3ea6ff; text-shadow: 0 0 12px rgba(62, 166, 255, 0.6); }
+.aoa-meter-tag.opponent { grid-area: otag; color: #ff4d4d; text-shadow: 0 0 12px rgba(255, 77, 77, 0.6); text-align: right; }
+/* dim the trailing side's name so the leader reads at a glance */
+.aoa-meter-row.lead-player .aoa-meter-tag.opponent,
+.aoa-meter-row.lead-opponent .aoa-meter-tag.player { opacity: 0.4; }
+.aoa-meter-row.lead-player .aoa-meter-tag.player,
+.aoa-meter-row.lead-opponent .aoa-meter-tag.opponent { transform: scale(1.08); }
+
+.aoa-meter-track {
+  grid-area: track;
+  position: relative;
+  height: 26px;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.09)),
+    rgba(6, 10, 20, 0.72);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.06),
+    0 4px 18px rgba(0, 0, 0, 0.4);
+}
+/* "pin zones" — the last stretch each side must reach to win */
+.aoa-meter-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 14%;
+  z-index: 1;
+  background-size: 8px 8px;
+  background-image: repeating-linear-gradient(
+    -45deg, transparent 0 3px, rgba(255, 255, 255, 0.12) 3px 4px
+  );
+}
+.aoa-meter-zone.left { left: 0; border-right: 1px dashed rgba(255, 77, 77, 0.5); }
+.aoa-meter-zone.right { right: 0; border-left: 1px dashed rgba(62, 166, 255, 0.5); }
+.aoa-meter-ticks {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: repeating-linear-gradient(
+    90deg, transparent 0 9.9%, rgba(255, 255, 255, 0.14) 9.9%, rgba(255, 255, 255, 0.14) 10%
+  );
+}
+.aoa-meter-fill {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 50%;
+  z-index: 2;
+  border-radius: 999px;
+  background: var(--lead-color); /* fallback for no color-mix */
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--lead-color) 55%, transparent),
+      var(--lead-color));
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--lead-color) 70%, transparent),
+    inset 0 0 8px rgba(255, 255, 255, 0.35);
+  transition: left 0.09s linear, width 0.09s linear, background 0.2s ease;
+}
+.aoa-meter-row.lead-opponent .aoa-meter-fill {
+  background: linear-gradient(90deg, var(--lead-color),
+    color-mix(in srgb, var(--lead-color) 55%, transparent));
+}
+/* animated sheen sliding along the fill */
+.aoa-meter-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: aoa-meter-sheen 1.5s linear infinite;
+}
+@keyframes aoa-meter-sheen {
+  from { background-position: -50% 0; }
+  to { background-position: 150% 0; }
+}
+.aoa-meter-center {
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+  transform: translateX(-50%);
+  z-index: 3;
+}
+/* leading-edge puck */
+.aoa-meter-knob {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--lead-color) 70%);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 14px var(--lead-color), 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: left 0.09s linear, background 0.2s ease, box-shadow 0.2s ease;
+}
+.aoa-meter-row.lead-even .aoa-meter-knob { background: radial-gradient(circle at 35% 30%, #fff, #9fb0c8 70%); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+.aoa-meter-readout {
+  grid-area: read;
+  justify-self: center;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--lead-color);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+  font-variant-numeric: tabular-nums;
+}
+.aoa-meter-row.lead-even .aoa-meter-readout { color: #9fb0c8; text-shadow: none; }
+
+/* close to a pin — the whole meter tenses up */
+.aoa-meter-row.is-critical .aoa-meter-track {
+  border-color: color-mix(in srgb, var(--lead-color) 80%, #fff);
+  animation: aoa-meter-pulse 0.5s ease-in-out infinite alternate;
+}
+.aoa-meter-row.is-critical .aoa-meter-readout { animation: aoa-meter-pulse 0.5s ease-in-out infinite alternate; }
+@keyframes aoa-meter-pulse {
+  from { box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), 0 0 8px transparent; }
+  to {
+    box-shadow:
+      inset 0 2px 8px rgba(0, 0, 0, 0.6),
+      0 0 22px color-mix(in srgb, var(--lead-color) 80%, transparent);
+    filter: brightness(1.15);
+  }
+}
+
+.aoa-bottom-hud {
+  position: absolute;
+  left: 50%;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  pointer-events: auto;
+  z-index: 7;
+}
+.aoa-countdown {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  font-weight: 900;
+  text-align: center;
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  z-index: 6;
+}
+.aoa-countdown-fight {
+  font-size: clamp(3.5rem, 12vw, 7rem);
+  color: #ff4d4d;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px #17101f, 0 0 60px rgba(255, 77, 77, 0.8);
+  animation: aoa-fight-pop 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+/* "READY" (countdown phase) and "START!" (the instant play begins) reuse
+   the same pop-in beat as FIGHT!, just recolored -- ready/fight/start */
+.aoa-countdown-ready {
+  font-size: clamp(2.6rem, 9vw, 5rem);
+  color: #3ea6ff;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px #06172a, 0 0 60px rgba(62, 166, 255, 0.8);
+  animation: aoa-fight-pop 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+.aoa-countdown-start {
+  font-size: clamp(3.5rem, 12vw, 7rem);
+  color: #4ee16b;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px #06172a, 0 0 60px rgba(78, 225, 107, 0.8);
+  animation: aoa-fight-pop 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+/* independent overlay so "START!" doesn't sit inside .aoa-bottom-hud's flex
+   flow with the POWER button/tap-hint that render in the same phase */
+.aoa-countdown-overlay {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  pointer-events: none;
+}
+@keyframes aoa-fight-pop {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  60% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Pre-fight "VS" matchup screen -- transparent overlay sitting directly on
+   top of the already-mounted 3D arms/ring scene (aoa-canvas-layer, showcase-
+   orbiting behind it) instead of hiding it behind a solid backdrop, so the
+   clasped arms are the actual centerpiece, VS badge overlapping the clasp. */
+.aoa-vs-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  cursor: pointer;
+  overflow: hidden;
+  animation: aoa-vs-in 0.4s ease both;
+}
+.aoa-vs-screen.aoa-vs-leaving {
+  animation: aoa-vs-out 0.32s cubic-bezier(0.4, 0, 0.6, 1) both;
+}
+@keyframes aoa-vs-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes aoa-vs-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* big centered "YOU VS Opponent" line, replacing the old corner-badge
+   layout -- one pop-in title dead center of the screen */
+.aoa-vs-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 1.2rem);
+  max-width: 92vw;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  animation: aoa-vs-title-in 0.5s 0.1s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
+}
+.aoa-vs-title span {
+  font-size: clamp(1.8rem, 7vw, 3.6rem);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1;
+  text-shadow: 1px 1px 0 #06172a, 2px 2px 0 #06172a, 3px 3px 14px rgba(0, 0, 0, 0.55);
+}
+.aoa-vs-title-sep {
+  font-size: clamp(1.1rem, 4vw, 2rem) !important;
+  font-style: italic;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
+}
+@keyframes aoa-vs-title-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.aoa-vs-skip {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  animation: aoa-vs-skip-pulse 1.8s infinite ease-in-out;
+}
+@keyframes aoa-vs-skip-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+/* same "gummy-pill" 3D recipe as .aoa-char-card-3d -- solid gradient-filled
+   body, glossy top sheen, a solid (un-blurred) drop shadow standing in for
+   depth, lift on hover, press flush + shadow collapse on tap/click -- just
+   round and red instead of a card. Made smaller than before per request. */
+.aoa-power-btn {
+  position: relative;
+  width: clamp(84px, 20vw, 120px);
+  height: clamp(84px, 20vw, 120px);
+  border-radius: 50%;
+  border: none;
+  --accent: #ff4d4d;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 70%, white 30%), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black 30%));
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.2s cubic-bezier(0.3, 1.6, 0.5, 1);
+  transform: translateY(0);
+  margin-bottom: 0.15rem;
+  z-index: 2;
+}
+.aoa-power-btn::before {
+  /* glossy top-half sheen, same as .aoa-char-card-3d */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(140px circle at 35% 30%, rgba(255, 255, 255, 0.35), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+.aoa-power-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 11px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+}
+.aoa-power-btn.tapped,
+.aoa-power-btn:active {
+  /* snappier than the default 0.2s bounce -- with rapid tapping the longer
+     overshoot transition never fully finished before the next tap, which
+     read as the button lagging/not responding cleanly */
+  transition: transform 0.09s ease-out, box-shadow 0.09s ease-out;
+  transform: translateY(4px) scale(0.98);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+}
+.aoa-tap-hint {
+  color: #b9aed0;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Result overlay */
+.aoa-result-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 5, 9, 0.72);
+  backdrop-filter: blur(4px);
+  animation: aoa-fadein 0.35s ease;
+  gap: 1rem;
+  text-align: center;
+  padding: 1rem;
+}
+@keyframes aoa-fadein { from { opacity: 0; } to { opacity: 1; } }
+
+.aoa-result-title {
+  font-size: clamp(2.6rem, 10vw, 4.4rem);
+  font-weight: 900;
+  letter-spacing: 2px;
+  animation: aoa-pop 0.5s cubic-bezier(.2,1.4,.4,1);
+}
+.aoa-result-title.win {
+  color: #3ea6ff;
+  text-shadow: 0 0 60px rgba(62, 166, 255, 0.8);
+}
+.aoa-result-title.lose {
+  color: #ff4d4d;
+  text-shadow: 0 0 60px rgba(255, 77, 77, 0.6);
+}
+@keyframes aoa-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.aoa-result-score { font-size: 1.1rem; color: #e6def2; }
+.aoa-result-msg { color: #b9aed0; max-width: 320px; }
+.aoa-result-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* confetti (DOM layer for extra pop on top of the 3D burst) */
+.aoa-confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  animation: aoa-fall linear forwards;
+}
+@keyframes aoa-fall {
+  to { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+}
+
+@media (max-width: 640px) {
+  .aoa-hud {
+    padding: 0.7rem 0.65rem max(0.9rem, env(safe-area-inset-bottom));
+  }
+  .aoa-scoreboard {
+    gap: 0.5rem;
+  }
+  .aoa-meter-row {
+    margin-top: 0;
+    transform: translateY(0);
+  }
+  .aoa-score-box {
+    min-width: 104px;
+    padding: 0.45rem 0.7rem;
+    max-width: 44vw;
+  }
+  .aoa-score-value { font-size: 1.5rem; }
+  .aoa-score-name {
+    font-size: 0.82rem;
+    letter-spacing: 0.4px;
+  }
+  .aoa-meter-row {
+    width: min(92vw, 520px);
+    column-gap: 0.45rem;
+  }
+  .aoa-meter-tag {
+    font-size: 0.62rem;
+    max-width: 72px;
+  }
+  .aoa-meter-track {
+    height: 22px;
+  }
+  .aoa-meter-readout {
+    font-size: 0.64rem;
+    letter-spacing: 1px;
+  }
+  .aoa-bottom-hud {
+    gap: 0.45rem;
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+  }
+  .aoa-power-btn {
+    width: clamp(74px, 19vw, 102px);
+    height: clamp(74px, 19vw, 102px);
+    margin-bottom: 0.3rem;
+    font-size: 0.82rem;
+  }
+  .aoa-tap-hint {
+    font-size: 0.68rem;
+    max-width: 72vw;
+    line-height: 1.3;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .aoa-score-box { min-width: 96px; padding: 0.4rem 0.55rem; }
+  .aoa-score-value { font-size: 1.4rem; }
+  .aoa-score-name { font-size: 0.78rem; }
+  .aoa-countdown { font-size: 3.8rem; }
+  .aoa-vs-title span {
+    letter-spacing: 0.3px;
+  }
+  .aoa-meter-row {
+    width: min(90vw, 440px);
+    transform: translateY(0);
+  }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  .aoa-hud {
+    padding-top: 0.45rem;
+    padding-bottom: 0.5rem;
+  }
+  .aoa-score-box {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+  .aoa-meter-row {
+    margin-top: 0.2rem;
+  }
+  .aoa-bottom-hud {
+    gap: 0.3rem;
+  }
+  .aoa-power-btn {
+    width: 68px;
+    height: 68px;
+    font-size: 0.75rem;
+  }
+  .aoa-tap-hint {
+    display: none;
+  }
+}

@@ -1,0 +1,204 @@
+.te-container {
+    display: flex;
+    width: 70%;
+    margin: 0 auto;
+    gap: 20px;
+    margin-top: 75px;
+}
+
+/* --- LEFT (70%) --- */
+.te-left {
+  flex: 5 5;
+  display: flex;
+  background: white;
+}
+
+.te-image-wrapper {
+    flex: 4 10;
+    padding: 16px;
+}
+
+.te-main-image {
+    /* width: 100%;
+    height: auto; */
+    border-radius: 10px;
+    width: 220px; height: 320px;
+}
+
+.te-info {
+    flex: 6 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px;
+}
+
+.te-name {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 100;
+}
+
+.te-desc {
+  margin: 8px 0;
+  flex: 1;
+}
+
+/* generic icon bar */
+.te-icons {
+    display: flex;
+    gap: 12px;
+    justify-content: right;
+}
+
+.te-icon {
+    cursor: pointer;
+    font-size: 1.2rem;
+    background: #515151ab;
+    color: white;
+    padding: 6px;
+    border-radius: 50%;
+    transition: 1s all;
+}
+
+/* --- RIGHT (30%) --- */
+.te-right {
+    flex: 5 5;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background: white;
+    min-height: 500px;
+}
+
+.te-select-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.te-select-title {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 100;
+}
+
+.te-create-btn {
+    color: #d83307;
+    border: 1px solid #d83307;
+    padding: 5px 10px;
+    font-weight: bolder;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    /* font-weight: 900; */
+}
+
+.te-create-btn i {
+  font-size: 1rem;
+}
+
+.te-create-btn:hover {
+   border: 2px solid #d83307;
+}
+
+
+/* themes grid: 2 per row */
+.te-themes-list {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: max-content;
+    padding:5px 16px;
+    gap: 15px;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    align-content: start;
+}
+
+/* each theme card */
+.te-theme-item {
+    position: relative;
+    width: 100%;
+    border: 0.5px solid #cdcdcd;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: 1s all;
+    height: 230px;
+    width: 156px;
+}
+
+/* thumbnail image */
+.te-theme-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* overlayed icon bar on theme card */
+.te-theme-item .te-icons {
+    position: absolute;
+    bottom: 8px;
+    left: 0px;
+    width: 100%;
+    padding: 5px 0px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.te-selected-icon{
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: white;
+    color: green;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.te-theme-item:hover{
+   box-shadow: 5px 5px 5px #79797996;
+}
+.te-icon:hover{
+  transform: rotate(30deg);
+}
+
+.load-theme-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh; /* vertically center */
+  text-align: center;
+}
+
+.load-theme-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #ccc;
+  border-top: 5px solid #4caf50; /* green spinner */
+  border-radius: 50%;
+  animation: load-theme-spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+.character-limit{
+    font-size: 0.85rem;
+    color: red;
+    margin-top: 5px;
+}
+
+@keyframes load-theme-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.load-theme-error {
+  color: #d9534f;
+  font-weight: bold;
+  font-size: 16px;
+}

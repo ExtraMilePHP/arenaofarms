@@ -1,0 +1,326 @@
+
+
+.quiz-loader-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* body{
+      height: 100vh;
+} */
+.quiz-loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #e3e3e3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: rules-spin 1s linear infinite;
+}
+
+@keyframes rules-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.user-rules-page {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 93dvh;
+  min-height: 93dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* padding: clamp(1rem, 4vw, 2rem); */
+}
+
+.user-rules-stack {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(750px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Fira Sans";
+  /* position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); */
+}
+
+.user-rules-fieldset {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  /* padding: clamp(1.25rem, 4vw, 1.75rem) clamp(1.25rem, 4vw, 2rem)
+    clamp(1.5rem, 4vw, 2rem); */
+  border: 2px solid #ffffff;
+  border-radius: 40px;
+  background: transparent;
+  text-align: center;
+  min-width: 0;
+  color: #ffffff;
+}
+
+.user-rules-fieldset .user-rules-list {
+  margin: 0;
+}
+
+.user-rules-heading {
+  margin: 0;
+  padding: 0 clamp(0.65rem, 2vw, 1rem);
+  font-family: "Fira Sans", system-ui, sans-serif;
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
+  font-weight: 900;
+  font-style: normal;
+  text-align: center;
+  color: inherit;
+  line-height: 1.2;
+  font-size: 40px;
+  font-weight: bolder;
+}
+
+.user-rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  color: inherit;
+  font-size: clamp(0.95rem, 2.8vw, 1.125rem);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.user-rules-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  font-size: 20px;
+  font-weight: normal;
+  text-align: left;
+}
+
+.user-rules-list li span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.user-rules-list li:last-child {
+  margin-bottom: 0;
+}
+
+.user-rules-bullet {
+  width: 33px;
+  height: 33px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.user-next-button {
+  appearance: none;
+  margin-top: clamp(1.75rem, 5vw, 2.5rem);
+  padding: 0.65rem 2.5rem;
+  font-family: "Fira Sans", system-ui, sans-serif;
+  font-size: clamp(1.1rem, 3vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  /* Fallback when the theme omits button colors; rules.jsx sets
+     backgroundColor/color inline from button_color/button_Textcolor and
+     overrides these. */
+  color: #2a1f5c;
+  background-color: #ffd542;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.08s ease, box-shadow 0.08s ease;
+  margin-bottom: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.user-next-button:hover {
+  filter: brightness(1.06);
+}
+
+.user-next-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.user-next-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .user-next-button {
+    padding: 0.55rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-rules-fieldset {
+    border-radius: 32px;
+    padding-left: clamp(1rem, 3vw, 1.5rem);
+    padding-right: clamp(1rem, 3vw, 1.5rem);
+  }
+.user-rules-stack {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: min(750px, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Fira Sans", system-ui, sans-serif;
+    position: relative;
+    top: 0%;
+    left: 0%;
+    transform: none;
+}
+  .user-rules-list li {
+    margin-bottom: 0.65rem;
+    font-size: 20px;
+    font-weight: normal;
+  }
+  .user-rules-heading{
+      font-size: 30px;
+
+}
+}
+
+/* Mobile portrait: fill space below header and vertically center rules + Next */
+@media (max-width: 768px) and (orientation: portrait) {
+  .user-rules-page {
+    /* ~header: logo row + padding (see .upperaction / .logo-holder) */
+    min-height: calc(100svh - 96px);
+    min-height: calc(100dvh - 96px);
+  }
+.user-rules-heading{
+      font-size: 30px;
+
+}
+  .user-rules-list {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    padding-inline: 0.25rem;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 380px) {
+  .user-rules-fieldset {
+    border-radius: 28px;
+    padding: 1.1rem 1rem 1.25rem;
+  }
+}
+
+/* ---------- Intro popup (admin-authored themeData.popup text) ----------
+   Same visual design as the "Controls"/"How To Play" card on the main game
+   page (maingame.css's .pf-controls-card etc.) — kept as its own
+   rules-prefixed classes rather than reusing those pf- names directly since
+   both stylesheets are plain global CSS, not scoped modules, and would
+   otherwise risk colliding once bundled together. */
+.rules-intro-gate {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 12, 6, 0.55);
+  z-index: 50;
+}
+
+.rules-intro-card {
+  position: relative;
+  background: linear-gradient(180deg, #f4e4c4 0%, #e8d0a0 100%);
+  border: 3px solid #1a120b;
+  border-radius: 14px;
+  padding: clamp(20px, 4vw, 28px) clamp(16px, 4vw, 24px);
+  max-width: 420px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow:
+    0 4px 0 #3d2112,
+    0 14px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: #2a1a0e;
+  text-align: left;
+}
+
+.rules-intro-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  border-radius: 11px 11px 0 0;
+  background: linear-gradient(180deg, #a2d149 0%, #6fa32e 70%, #567d2a 100%);
+  border-bottom: 2px solid #3d5c1a;
+  pointer-events: none;
+}
+
+.rules-intro-title {
+  margin: 8px 0 16px;
+  text-align: center;
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #2a1a0e;
+}
+
+.rules-intro-text {
+  margin: 0;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  line-height: 1.5;
+  color: #2a1a0e;
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+.rules-intro-btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.rules-intro-btn {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  /* background: linear-gradient(180deg, #ffd542, #f2a900); */
+  color: #241a00;
+  box-shadow: 0 4px 0 #a06f00, 0 8px 18px rgba(0, 0, 0, 0.4);
+  transition: filter 0.15s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.rules-intro-btn:hover {
+  filter: brightness(1.06);
+}
+
+.rules-intro-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #a06f00, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.rules-intro-btn:focus-visible {
+  outline: 2px solid #ffd542;
+  outline-offset: 3px;
+}
+
+@media (max-width: 400px) {
+  .rules-intro-card {
+    padding: 18px 12px 16px;
+  }
+}
