@@ -252,6 +252,8 @@ export default function Leaderboard() {
           },
           body: JSON.stringify({
             userId: userId || undefined,
+            sessionId: storedUserData?.sessionId || undefined,
+            organizationId: storedUserData?.organizationId || undefined,
           }),
         });
         const raw = await res.text();
