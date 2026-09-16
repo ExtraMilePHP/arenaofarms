@@ -5,8 +5,8 @@ import ArmWrestleScene from "../../three/ArmWrestleScene";
 import BattleSound from "./battleSound";
 import { getCharacter } from "../../data/characters";
 import {
-  buildPlayerProfile,
   getLocalPlayerId,
+  getSessionUserData,
   listenLobby,
   tapLobby,
   WIN_LIMIT,
@@ -15,13 +15,22 @@ import { reportArmMatch } from "../../functions/armReport";
 import { fetchReport, reportHasResult, parseTimeToSeconds } from "../../functions/fetchReport";
 import "../arena.css";
 
-/** "Name / email / employeeId" — skips blanks, used on the battle scoreboard. */
-function identityLine(profile) {
-  if (!profile || typeof profile !== "object") return "";
-  return [profile.name, profile.email, profile.employeeId]
-    .map((v) => (v != null ? String(v).trim() : ""))
-    .filter(Boolean)
-    .join(" / ");
+// firebaseArena.js's buildPlayerProfile/createLobby/joinLobby fall back to
+// these literal placeholders when a player has no real name -- treat them as
+// blank here too, so the scoreboard falls through to email/employeeId
+// instead of displaying "Player"/"Player 1"/"Player 2".
+const GENERIC_PLAYER_NAME_RE = /^(null(\s+null)*|player(\s*\d+)?)$/i;
+
+/** name -> email -> employeeId, skipping blanks/"null"/generic "Player" placeholders. */
+function pickIdentityName(src) {
+  if (!src || typeof src !== "object") return "";
+  const name = typeof src.name === "string" ? src.name.trim() : "";
+  if (name && !GENERIC_PLAYER_NAME_RE.test(name)) return name;
+  const email = typeof src.email === "string" ? src.email.trim() : "";
+  if (email) return email;
+  const employeeId = typeof src.employeeId === "string" ? src.employeeId.trim() : "";
+  if (employeeId) return employeeId;
+  return "";
 }
 
 const PLAYER_COLOR = "#3ea6ff";
@@ -114,10 +123,16 @@ export default function Battle({ mode }) {
   const [showStart, setShowStart] = useState(false);
   const [opponentName, setOpponentName] = useState(mode === "solo" ? character.fighter : "Opponent");
   const [opponentProfile, setOpponentProfile] = useState(null);
-  // local player's own identity ("Name / email / employeeId") for the scoreboard
-  const myIdentity = useRef(
-    mode === "solo" ? "You" : identityLine(buildPlayerProfile()) || "You"
-  ).current;
+  // local player's own display name, shown as "YOU (name)" on the scoreboard
+  // -- name if set, else email, else employeeId
+  const myPlayerName = useRef(pickIdentityName(getSessionUserData())).current;
+  // opponent's display name, shown as "Opponent (name)" -- the AI fighter's
+  // name in solo, or the lobby opponent's profile name/email/employeeId in
+  // multiplayer
+  const opponentDisplayName =
+    mode === "solo"
+      ? character.fighter
+      : pickIdentityName(opponentProfile) || pickIdentityName({ name: opponentName });
   const opponentNameRef = useRef(opponentName); // read by finishBattle (stable callback)
   useEffect(() => {
     opponentNameRef.current = opponentName;
@@ -591,15 +606,13 @@ export default function Battle({ mode }) {
             <div className="aoa-scoreboard">
               <div className="aoa-score-box player">
                 <div className="aoa-score-name">
-                  {mode === "multiplayer" ? myIdentity : "You"}
+                  YOU{myPlayerName ? ` (${myPlayerName})` : ""}
                 </div>
                 <div className="aoa-score-value">{hud.player}</div>
               </div>
               <div className="aoa-score-box opponent">
                 <div className="aoa-score-name">
-                  {mode === "multiplayer"
-                    ? identityLine(opponentProfile) || opponentName
-                    : opponentName}
+                  Opponent{opponentDisplayName ? ` (${opponentDisplayName})` : ""}
                 </div>
                 <div className="aoa-score-value">{hud.opponent}</div>
               </div>

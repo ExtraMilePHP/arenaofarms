@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
+  checkLobbyRejoinable,
   createLobby,
   getLocalPlayerId,
   getLocalPlayerName,
@@ -10,21 +11,39 @@ import { setBackButtonUrl } from "../uiSlice";
 import { useThemeColors } from "../../functions/useThemeColors";
 import "../arena.css";
 
-/** The player's name -- always taken from the session payload (userData); the
- *  player never types it in when creating or joining a lobby. */
-function playerName() {
+function readStoredUserData() {
   try {
     const raw =
       sessionStorage.getItem("userData") ||
       localStorage.getItem("userData") ||
       "{}";
-    const u = JSON.parse(raw) || {};
-    const n = typeof u.name === "string" ? u.name.trim() : "";
-    if (n && !/^null(\s+null)*$/i.test(n)) return n;
+    return JSON.parse(raw) || {};
   } catch {
-    /* ignore */
+    return {};
   }
+}
+
+/** The player's name -- always taken from the session payload (userData); the
+ *  player never types it in when creating or joining a lobby. */
+function playerName() {
+  const u = readStoredUserData();
+  const n = typeof u.name === "string" ? u.name.trim() : "";
+  if (n && !/^null(\s+null)*$/i.test(n)) return n;
   return getLocalPlayerName() || "Player";
+}
+
+/** Remember the lobby code on userData (mirrors noughts_and_crosses_react-master's
+ *  lobby.jsx) so re-opening the app can silently drop the player back into a
+ *  lobby they already created/joined instead of starting over. */
+function persistLobbyCode(code) {
+  try {
+    const merged = { ...readStoredUserData(), lobby: code || null };
+    const payload = JSON.stringify(merged);
+    localStorage.setItem("userData", payload);
+    sessionStorage.setItem("userData", payload);
+  } catch {
+    /* ignore storage failures */
+  }
 }
 
 export default function LobbyChooser() {
@@ -36,6 +55,11 @@ export default function LobbyChooser() {
   const [code, setCode] = useState(searchParams.get("code") || "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [checkingRejoin, setCheckingRejoin] = useState(true);
+  const storedLobbyCode = useMemo(
+    () => String(readStoredUserData()?.lobby || "").trim(),
+    []
+  );
 
   const handleCreate = async () => {
     setError("");
@@ -43,6 +67,7 @@ export default function LobbyChooser() {
     try {
       const playerId = getLocalPlayerId();
       const newCode = await createLobby({ playerId, playerName: playerName() });
+      persistLobbyCode(newCode);
       navigate(`/arena/lobby/${newCode}`);
     } catch (e) {
       setError(e.message || "Could not create lobby.");
@@ -55,12 +80,43 @@ export default function LobbyChooser() {
     setError("");
     const clean = code.trim();
     if (!/^\d{6}$/.test(clean)) return setError("Enter the 6-digit lobby code.");
+    persistLobbyCode(clean);
     navigate(`/arena/lobby/${clean}`);
   };
 
   useEffect(() => {
     dispatch(setBackButtonUrl("/arena"));
   }, [status, user, dispatch]);
+
+  // Silently rejoin a lobby the player already created/joined (persisted on
+  // userData.lobby) if it's still open, instead of showing create/join again.
+  useEffect(() => {
+    let cancelled = false;
+    if (!storedLobbyCode) {
+      setCheckingRejoin(false);
+      return undefined;
+    }
+    checkLobbyRejoinable(storedLobbyCode, getLocalPlayerId())
+      .then((ok) => {
+        if (cancelled) return;
+        if (ok) {
+          navigate(`/arena/lobby/${storedLobbyCode}`, { replace: true });
+          return;
+        }
+        persistLobbyCode(null);
+        setCheckingRejoin(false);
+      })
+      .catch(() => {
+        if (!cancelled) setCheckingRejoin(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [storedLobbyCode, navigate]);
+
+  if (checkingRejoin) {
+    return <div className="aoa-root" style={textStyle} />;
+  }
 
   return (
     <div className="aoa-root" style={textStyle}>

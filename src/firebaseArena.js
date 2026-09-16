@@ -199,6 +199,27 @@ export async function joinLobby({ code, playerId, playerName }) {
   return code;
 }
 
+/**
+ * Whether a previously-joined lobby (persisted on userData.lobby, mirroring
+ * noughts_and_crosses_react-master's lobby.jsx re-entry check) can still be
+ * auto-rejoined: it must exist, not be finished, and either already have
+ * this player or still have a free seat.
+ */
+export async function checkLobbyRejoinable(code, playerId) {
+  if (!code || !playerId) return false;
+  try {
+    const snap = await get(ref(db, `lobbies/${code}`));
+    if (!snap.exists()) return false;
+    const lobby = snap.val();
+    if (String(lobby.status ?? "").trim().toLowerCase() === "finished") return false;
+    const players = lobby.players || {};
+    if (players[playerId]) return true;
+    return Object.keys(players).length < 2;
+  } catch {
+    return false;
+  }
+}
+
 export function listenLobby(code, callback) {
   const lobbyRef = ref(db, `lobbies/${code}`);
   const handler = (snap) => callback(snap.val());

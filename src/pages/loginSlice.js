@@ -119,6 +119,7 @@ export const loginUser = createAsyncThunk(
                 companyLogoUrl: process.env.REACT_APP_EM_LOGO,
                 backButtonRedirect: process.env.REACT_APP_BASE_URL,
                 gameover: 0,
+                
               }
             }
           };
@@ -188,6 +189,11 @@ export const loginUser = createAsyncThunk(
         fromMobileApp,
         isCopy: !!userResponseData.isCopy,
         originalSessionId: userResponseData.originalSessionId || null,
+        // multiplayer lobby code the player last created/joined (see
+        // LobbyChooser.jsx) -- lets a fresh session silently rejoin it
+        // instead of starting the lobby flow over, same as
+        // noughts_and_crosses_react-master's loginSlice/lobby.jsx.
+        lobby: userResponseData.lobby || null,
       };
 
       if (!demo) {

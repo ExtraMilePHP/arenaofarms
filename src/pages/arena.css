@@ -421,7 +421,7 @@
   padding: 8px;
 }
 .aoa-link-row {
-  display: flex;
+  display: inline-flex;
   gap: 0.5rem;
   margin-top: 0.8rem;
 }
