@@ -132,6 +132,9 @@ export async function reportArmMatch({
         total_score: score,
         time,
         status,
+        // solo rematches each get their own stages row instead of
+        // overwriting the session's existing one (see addReport.js)
+        forceInsert: isSolo,
         winnerId, // player's id (win), opponent's id (mp loss), or "AI" (solo loss)
         opponentId: opponentId || "AI",
         opponentemail: opponentEmail || opponentId || "AI",

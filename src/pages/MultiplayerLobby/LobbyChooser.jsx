@@ -33,7 +33,6 @@ export default function LobbyChooser() {
   const { status, user } = useSelector((state) => state.auth);
   const { textStyle, buttonStyle } = useThemeColors();
   const [searchParams] = useSearchParams();
-  const [showJoin, setShowJoin] = useState(!!searchParams.get("code"));
   const [code, setCode] = useState(searchParams.get("code") || "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -66,66 +65,50 @@ export default function LobbyChooser() {
   return (
     <div className="aoa-root" style={textStyle}>
       <div className="aoa-title" style={{ fontSize: "clamp(1.6rem, 5vw, 2.4rem)" }}>
-        Multiplayer
+        Multiplayer Lobby
       </div>
       <div className="aoa-subtitle">Create a lobby or join with a code.</div>
 
-      <div className="aoa-card">
-        {!showJoin ? (
-          <>
-            <button
-              className="aoa-btn aoa-btn-primary"
-              style={{ width: "100%", ...buttonStyle }}
-              disabled={busy}
-              onClick={handleCreate}
-            >
-              {busy ? "Creating…" : "Create Lobby"}
-            </button>
-            <button
-              className="aoa-btn aoa-btn-secondary"
-              style={{ width: "100%", marginTop: "0.9rem", ...buttonStyle }}
-              disabled={busy}
-              onClick={() => {
-                setError("");
-                setShowJoin(true);
-              }}
-            >
-              Join Lobby
-            </button>
-          </>
-        ) : (
-          <>
-            <input
-              className="aoa-code-input"
-              placeholder="000000"
-              inputMode="numeric"
-              maxLength={6}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              style={{ marginBottom: "0.9rem" }}
-            />
-            <button
-              className="aoa-btn aoa-btn-primary"
-              style={{ width: "100%", ...buttonStyle }}
-              onClick={handleJoin}
-            >
-              Join Lobby
-            </button>
-            <button
-              className="aoa-btn aoa-btn-ghost"
-              style={{ width: "100%", marginTop: "0.9rem" }}
-              onClick={() => {
-                setError("");
-                setShowJoin(false);
-              }}
-            >
-              ← Back
-            </button>
-          </>
-        )}
+      <div className="aoa-lobby-split">
+        <div className="aoa-card aoa-lobby-panel">
+          <div className="aoa-lobby-panel-title">Create Lobby</div>
+          <div className="aoa-lobby-panel-desc">Challenge your friends, anywhere.</div>
+          <button
+            className="aoa-btn aoa-btn-primary"
+            style={{ width: "100%", marginTop: "auto", ...buttonStyle }}
+            disabled={busy}
+            onClick={handleCreate}
+          >
+            {busy ? "Creating…" : "Create Lobby"}
+          </button>
+        </div>
 
-        {error && <div className="aoa-error">{error}</div>}
+        <div className="aoa-card aoa-lobby-panel">
+          <div className="aoa-lobby-panel-title">Join Lobby</div>
+          <div className="aoa-lobby-panel-desc">Enter a room code to join.</div>
+          <input
+            className="aoa-code-input"
+            placeholder="000000"
+            inputMode="numeric"
+            maxLength={6}
+            value={code}
+            onChange={(e) => {
+              setError("");
+              setCode(e.target.value.replace(/\D/g, "").slice(0, 6));
+            }}
+            style={{ marginBottom: "0.9rem" }}
+          />
+          <button
+            className="aoa-btn aoa-btn-primary"
+            style={{ width: "100%", ...buttonStyle }}
+            onClick={handleJoin}
+          >
+            Join
+          </button>
+        </div>
       </div>
+
+      {error && <div className="aoa-error">{error}</div>}
     </div>
   );
 }

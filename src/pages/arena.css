@@ -39,6 +39,82 @@
   margin-bottom: 2rem;
 }
 
+.aoa-root-menu {
+  /* justify-content: flex-end; */
+  /* padding-bottom: clamp(1.5rem, 5vh, 3rem); */
+}
+
+.aoa-menu-logo {
+  max-width: min(80vw, 450px);
+  max-height: 60vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: auto;
+  /* margin-top: clamp(1.5rem, 6vh, 3rem); */
+      margin-bottom: 0px;
+}
+
+.aoa-menu-actions-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: min(94vw, 620px);
+  gap: 1rem;
+  margin-bottom: 0;
+}
+
+.aoa-menu-actions-row .aoa-btn {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.aoa-menu-actions-row .aoa-btn-lg {
+  padding: 1.35rem 2.25rem;
+  font-size: 1.25rem;
+  min-width: 220px;
+}
+
+@media (max-width: 560px) {
+  .aoa-menu-actions-row .aoa-btn-lg {
+    min-width: 0;
+    padding: 1.1rem 1.5rem;
+    font-size: 1.05rem;
+  }
+}
+
+/* short/landscape phones: the logo + big buttons can outgrow the viewport
+   height together, so shrink the logo and tighten gaps instead of scrolling */
+@media (max-height: 480px) and (orientation: landscape) {
+  .aoa-root-menu {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .aoa-menu-logo {
+    max-height: 26vh;
+    max-width: min(50vw, 260px);
+  }
+  .aoa-menu-actions-row .aoa-btn-lg {
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+    min-width: 180px;
+  }
+}
+
+.aoa-btn-primary-fill {
+  background-color: var(--btn-bg, #e8432f);
+  color: var(--btn-color, #fff);
+  box-shadow: var(--btn-shadow, 0 8px 0 #8a1717);
+}
+.aoa-btn-primary-fill:active { box-shadow: 0 2px 0 #8a1717; }
+
 /* chunky "gummy-pill" 3D game buttons -- a solid un-blurred bottom lip
    (box-shadow, same border-radius as the button so it reads as a rounded
    puck underneath) gives the extruded look; a glossy top highlight sells
@@ -89,12 +165,23 @@
 .aoa-btn-secondary:active { box-shadow: 0 2px 0 #8a1717; }
 
 .aoa-btn-ghost {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  background-color: var(--btn-bg, rgba(255, 255, 255, 0.1));
+  color: var(--btn-color, #fff);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: var(--btn-shadow, 0 8px 0 rgba(0, 0, 0, 0.3));
 }
-.aoa-btn-ghost:hover { background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.09)); box-shadow: 0 11px 0 rgba(0, 0, 0, 0.3); }
 .aoa-btn-ghost:active { box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3); }
+
+/* Frosted-glass hover: both variants dissolve into the same translucent,
+   blurred pill on hover so the themed fill color doesn't fight the effect. */
+.aoa-btn-primary-fill:hover,
+.aoa-btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 11px 0 rgba(0, 0, 0, 0.3), 0 14px 26px rgba(0, 0, 0, 0.25);
+}
 
 .aoa-card {
   background: rgba(255, 255, 255, 0.04);
@@ -103,6 +190,47 @@
   padding: 1.6rem;
   width: min(92vw, 420px);
   backdrop-filter: blur(6px);
+}
+
+.aoa-lobby-split {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1.2rem;
+  width: min(94vw, 900px);
+}
+
+.aoa-lobby-panel {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  width: auto;
+}
+
+.aoa-lobby-panel-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.aoa-lobby-panel-desc {
+  text-align: center;
+  color: #b9aed0;
+  font-size: 0.9rem;
+  margin-bottom: 1.4rem;
+}
+
+@media (max-width: 720px) {
+  .aoa-lobby-split {
+    flex-direction: column;
+    align-items: center;
+  }
+  .aoa-lobby-panel {
+    width: min(92vw, 420px);
+    flex: none;
+  }
 }
 
 .aoa-back {
@@ -302,14 +430,19 @@
 }
 .aoa-link-input {
   flex: 1;
+  min-width: 0;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   padding: 0.6rem 0.8rem;
   color: #fff;
   font-size: 0.82rem;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.aoa-link-row .aoa-btn {
+  flex-shrink: 0;
 }
 .aoa-code-input {
   width: 100%;
@@ -383,6 +516,21 @@
   font-size: 0.85rem;
   margin-top: 0.8rem;
   text-align: center;
+}
+
+@media (max-width: 380px) {
+  .aoa-card {
+    padding: 1.1rem;
+  }
+  .aoa-lobby-code {
+    font-size: clamp(1.9rem, 11vw, 2.6rem);
+    letter-spacing: 6px;
+  }
+  .aoa-code-input {
+    font-size: 1.15rem;
+    letter-spacing: 4px;
+    padding: 0.75rem;
+  }
 }
 
 /* Battle screen */
@@ -507,14 +655,17 @@
   position: relative;
   height: 26px;
   border-radius: 999px;
+  /* lighter, more opaque base than the old near-black fill -- against the
+     dark arena backdrop the track itself used to nearly disappear, leaving
+     only the (often small, near-even) colored fill visible */
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.09)),
-    rgba(6, 10, 20, 0.72);
+    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.1)),
+    rgba(40, 44, 58, 0.85);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow:
-    inset 0 2px 8px rgba(0, 0, 0, 0.6),
-    inset 0 -1px 2px rgba(255, 255, 255, 0.06),
+    inset 0 2px 8px rgba(0, 0, 0, 0.45),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.12),
     0 4px 18px rgba(0, 0, 0, 0.4);
 }
 /* "pin zones" — the last stretch each side must reach to win */
@@ -536,7 +687,7 @@
   inset: 0;
   z-index: 1;
   background-image: repeating-linear-gradient(
-    90deg, transparent 0 9.9%, rgba(255, 255, 255, 0.14) 9.9%, rgba(255, 255, 255, 0.14) 10%
+    90deg, transparent 0 9.9%, rgba(0, 0, 0, 0.22) 9.9%, rgba(0, 0, 0, 0.22) 10%
   );
 }
 .aoa-meter-fill {

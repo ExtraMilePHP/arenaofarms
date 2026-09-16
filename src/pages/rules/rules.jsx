@@ -15,14 +15,6 @@ function UserRules() {
   const { status, user, error } = useSelector((state) => state.auth);
   const [redirect, setRedirect] = useState("/maingame");
   const [isLoading, setIsLoading] = useState(false);
-  // Admin-authored intro popup (themeData.popup, see admin/pages/rules/rules.jsx)
-  // — shown once, before the How to Play list, and dismissed by the player.
-  const [introPopupDismissed, setIntroPopupDismissed] = useState(false);
-
-  const introPopupText = useMemo(() => {
-    const raw = themeData?.popup;
-    return typeof raw === 'string' ? raw.trim() : '';
-  }, [themeData]);
 
   const rulesList = useMemo(() => {
     const raw = themeData?.rules;
@@ -67,27 +59,6 @@ function UserRules() {
       </div>
   );
 }
-
-  if (introPopupText && !introPopupDismissed) {
-    return (
-      <div className="rules-intro-gate">
-        <div className="rules-intro-card" onClick={(e) => e.stopPropagation()}>
-          <h1 className="rules-intro-title">Welcome</h1>
-          <p className="rules-intro-text">{introPopupText}</p>
-          <div className="rules-intro-btn-row">
-            <button
-              type="button"
-              className="rules-intro-btn"
-              style={nextButtonStyle}
-              onClick={() => setIntroPopupDismissed(true)}
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>

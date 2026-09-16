@@ -504,8 +504,11 @@ export default function Battle({ mode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [handleTap]);
 
+  // Multiplayer always moves straight on to the thank-you page — no rematch
+  // option there. Solo instead shows a Rematch button (see result overlay
+  // below) and only leaves for the thank-you page when the player chooses to.
   useEffect(() => {
-    if (phase === "result") {
+    if (mode === "multiplayer" && phase === "result") {
       const timeout = setTimeout(() => {
         navigate("/thankyou", {
           replace: true,
@@ -519,7 +522,29 @@ export default function Battle({ mode }) {
 
       return () => clearTimeout(timeout);
     }
-  }, [phase, navigate]);
+  }, [mode, phase, navigate]);
+
+  const handleRematch = useCallback(() => {
+    meterRef.current = 0;
+    playerScoreRef.current = 0;
+    opponentScoreRef.current = 0;
+    reportedRef.current = false;
+    pinLatchRef.current = 0;
+    sceneRef.current?.reset();
+    setResult(null);
+    setCountdown(3);
+    setPhase("countdown");
+  }, []);
+
+  const handleExit = useCallback(() => {
+    navigate("/thankyou", {
+      replace: true,
+      state: {
+        points: finalStatsRef.current.points,
+        time: finalStatsRef.current.time,
+      },
+    });
+  }, [navigate]);
 
   const meterPct = ((hud.meter + 100) / 200) * 100; // 0..100 (50 = dead even)
   const fillLeft = Math.min(50, meterPct);
@@ -646,6 +671,16 @@ export default function Battle({ mode }) {
             {hud.player} — {hud.opponent}
           </div>
           <div className="aoa-result-msg">{resultMsg}</div>
+          {mode === "solo" && (
+            <div className="aoa-result-actions">
+              <button className="aoa-btn aoa-btn-primary" style={powerBtnStyle} onClick={handleRematch}>
+                Rematch
+              </button>
+              <button className="aoa-btn aoa-btn-ghost" onClick={handleExit}>
+                Exit
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

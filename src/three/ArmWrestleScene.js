@@ -42,7 +42,7 @@ export default class ArmWrestleScene {
 
     this.width = container.clientWidth || 1;
     this.height = container.clientHeight || 1;
-    this.sceneScale = this.width < 768 ? 0.78 : 0.9;
+    this.sceneScale = this._computeSceneScale(this.width);
     this.desktopUpShift = this.width < 768 ? 0 : -0.08;
 
     this.scene = new THREE.Scene();
@@ -57,7 +57,7 @@ export default class ArmWrestleScene {
     // near-level height aimed up at the clasp -- this pushes the elbows / upper
     // arms down past the bottom edge so only the forearms + clashing fists are
     // on screen (user: "upper arm should go down, we can't see it")
-    this.baseCameraZ = 4.2;
+    this.baseCameraZ = this._computeCameraZ(this.width, this.height);
     this.baseCameraY = 2.15;
     this.cameraLookY = 1.5;
     this.camera.position.set(0, this.baseCameraY, this.baseCameraZ);
@@ -720,12 +720,31 @@ export default class ArmWrestleScene {
     this.particleLife = 1.4;
   }
 
+  // Mobile viewports are narrow AND tall (portrait), so the same vertical
+  // FOV crops in tighter on the sides than it does on a wide desktop window
+  // -- the arm/table end up reading much larger relative to the screen. Scale
+  // the model down and back the camera off further the narrower the aspect
+  // ratio gets, instead of just a flat "mobile vs desktop" split.
+  _computeSceneScale(width) {
+    return width < 768 ? 0.62 : 0.9;
+  }
+
+  _computeCameraZ(width, height) {
+    if (width >= 768) return 4.2;
+    const aspect = width / (height || 1);
+    // 0.5 = a typical tall phone (e.g. 390x844); back off further the
+    // narrower/taller it gets, capped so it never runs away on odd sizes
+    const narrowBoost = Math.max(0, 0.62 - aspect) * 3.2;
+    return Math.min(6.4, 5.0 + narrowBoost);
+  }
+
   _onResize() {
     if (!this.container) return;
     const prevScale = this.sceneScale;
     this.width = this.container.clientWidth || 1;
     this.height = this.container.clientHeight || 1;
-    this.sceneScale = this.width < 768 ? 0.78 : 0.9;
+    this.sceneScale = this._computeSceneScale(this.width);
+    this.baseCameraZ = this._computeCameraZ(this.width, this.height);
     this.desktopUpShift = this.width < 768 ? 0 : -0.14;
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();

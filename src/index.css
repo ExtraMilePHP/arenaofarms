@@ -48,7 +48,7 @@ body.common-bg {
     /* background: url("img/mob.jpg"); */
     background-color: #ffffff;
     background-repeat: no-repeat;
-    background-size: cover !important;
+    background-size: 100% 100% !important;
     background-attachment: fixed;
   }
 }

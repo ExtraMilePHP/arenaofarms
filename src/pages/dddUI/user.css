@@ -31,6 +31,24 @@
     padding: 3px 10px;
 }
 
+@media (max-width: 480px) {
+    .upperaction {
+        padding: 6px 8px;
+    }
+    .logo-holder {
+        max-height: 48px;
+        max-width: 110px;
+    }
+    .back-default {
+        font-size: 14px;
+        padding: 3px 8px;
+        margin-right: 8px;
+    }
+    .back-holder {
+        margin-left: 6px;
+    }
+}
+
 
        .quiz-loader {
             width: 50px;
