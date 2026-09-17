@@ -865,8 +865,9 @@ export default class ArmWrestleScene {
       if (this.criticalShake && !this.resultMode) {
         const t = this.clock.elapsedTime;
         const amp = 0.012;
-        this.armsGroup.position.x += (Math.sin(t * 37) + Math.sin(t * 53) * 0.5) * amp;
-        this.armsGroup.position.y += (Math.sin(t * 41 + 1.3) + Math.sin(t * 29) * 0.5) * amp * 0.6;
+        // slower tremor -- same layered-sine approach, just lower frequencies
+        this.armsGroup.position.x += (Math.sin(t * 14) + Math.sin(t * 21) * 0.5) * amp;
+        this.armsGroup.position.y += (Math.sin(t * 16 + 1.3) + Math.sin(t * 11) * 0.5) * amp * 0.6;
       }
 
       // at the pin, lower the whole planted arm so the clasped fists come
