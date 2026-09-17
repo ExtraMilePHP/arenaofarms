@@ -12,7 +12,6 @@ import {
   WIN_LIMIT,
 } from "../../firebaseArena";
 import { reportArmMatch } from "../../functions/armReport";
-import { fetchReport, reportHasResult, parseTimeToSeconds } from "../../functions/fetchReport";
 import "../arena.css";
 
 // firebaseArena.js's buildPlayerProfile/createLobby/joinLobby fall back to
@@ -146,42 +145,14 @@ export default function Battle({ mode }) {
   const lobbyStateRef = useRef(null);
   const soundRef = useRef(null);
 
-  // ---- "already played" gate ----
-  // Before the match spins up, check for an existing report row. If its status
-  // is non-empty (anything past the default "inprogress" — i.e. a round was
-  // already recorded), send the player straight to the thank-you page with the
-  // score they ended on instead of letting them play again.
-  const [reportChecked, setReportChecked] = useState(false);
-  useEffect(() => {
-    let cancelled = false;
-    fetchReport()
-      .then((report) => {
-        if (cancelled) return;
-        if (reportHasResult(report)) {
-          navigate("/thankyou", {
-            replace: true,
-            state: {
-              points: Number(report.points) || 0,
-              time: parseTimeToSeconds(report.time),
-            },
-          });
-          return;
-        }
-        setReportChecked(true);
-      })
-      .catch(() => {
-        if (!cancelled) setReportChecked(true); // don't block play on a fetch error
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [navigate]);
-
   // ---- three.js scene lifecycle ----
+  // Replay is allowed (no more "already played" gate redirecting straight to
+  // /thankyou) -- reportArmMatch now merges each match's score onto the same
+  // report row instead of the round being a one-shot deal, so the scene can
+  // just build on mount.
   const handleTapRef = useRef(() => {});
   useEffect(() => {
-    // wait for the "already played" gate to clear before building the scene
-    if (!reportChecked || !containerRef.current) return;
+    if (!containerRef.current) return;
     sceneRef.current = new ArmWrestleScene(containerRef.current, {
       playerColor: PLAYER_COLOR,
       opponentColor,
@@ -192,7 +163,7 @@ export default function Battle({ mode }) {
       sceneRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reportChecked]);
+  }, []);
 
   // ---- background music + SFX -- synthesized tones, no audio asset files
   // (see battleSound.js). Browsers block audio playback until a real user
@@ -223,13 +194,12 @@ export default function Battle({ mode }) {
   }, [phase]);
 
   // tap directly on the clasped arms (in addition to the POWER button) only
-  // while actively playing; the arena keeps a slow 360 showcase spin until then
+  // while actively playing; the arm model is shown front-on from the very
+  // start (no showcase spin) so it's visible the whole time
   useEffect(() => {
     sceneRef.current?.setTappable(phase === "playing");
-    sceneRef.current?.setShowcase(phase === "matchup" || phase === "countdown");
-    // keep the arms hidden through the whole ready/fight/start beat -- only
-    // reveal them once the camera has settled front-on for actual play
-    sceneRef.current?.setArmsVisible(phase === "playing" || phase === "result");
+    sceneRef.current?.setShowcase(false);
+    sceneRef.current?.setArmsVisible(true);
   }, [phase]);
 
   // ---- countdown ----
@@ -285,14 +255,24 @@ export default function Battle({ mode }) {
       const durationSec = matchStartRef.current
         ? (performance.now() - matchStartRef.current) / 1000
         : 0;
+      // reported/final score is a flat win=1 / lose=0 -- NOT the live tap/power
+      // meter total (playerScoreRef), which is only the in-round tug-of-war
+      // progress display, not the match's actual score
+      const matchScore = outcome === "win" ? 1 : 0;
+      const matchSeconds = Math.round(durationSec);
+      // best-known totals until reportArmMatch resolves (see below) -- falls
+      // back to just this match's own numbers if the report never lands in
+      // time (or at all), so the thank-you page always has something to show
       finalStatsRef.current = {
-        points: Math.round(playerScoreRef.current),
-        time: Math.round(durationSec),
+        points: matchScore,
+        time: matchSeconds,
+        totalPoints: matchScore,
+        totalTime: matchSeconds,
       };
       const oppProfile = opponentProfileRef.current || {};
       reportArmMatch({
         outcome,
-        points: playerScoreRef.current,
+        points: matchScore,
         durationSec,
         mode,
         opponentName:
@@ -310,7 +290,17 @@ export default function Battle({ mode }) {
                 name: oppProfile.name || opponentNameRef.current || "Opponent",
                 email: oppProfile.email || oppProfile.employeeId || "",
               },
-      }).catch(() => {});
+      })
+        .then((result) => {
+          if (!result) return;
+          finalStatsRef.current = {
+            points: result.matchScore,
+            time: result.matchSeconds,
+            totalPoints: result.totalPoints,
+            totalTime: result.totalSeconds,
+          };
+        })
+        .catch(() => {});
     }
     // hold the result overlay back until the arm has actually slammed to the
     // table (isPinComplete), not just a fixed beat -- the meter can trip the
@@ -507,59 +497,31 @@ export default function Battle({ mode }) {
     handleTapRef.current = handleTap;
   }, [handleTap]);
 
-  // keyboard support (space/enter) for desktop testing
+  // Both modes move straight on to the thank-you page once the pin lands --
+  // no more in-battle result overlay/Rematch. Solo's "Play Again" there
+  // restarts the same matchup by re-navigating to this same battle route.
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.code === "Space" || e.code === "Enter") {
-        e.preventDefault();
-        handleTap();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [handleTap]);
-
-  // Multiplayer always moves straight on to the thank-you page — no rematch
-  // option there. Solo instead shows a Rematch button (see result overlay
-  // below) and only leaves for the thank-you page when the player chooses to.
-  useEffect(() => {
-    if (mode === "multiplayer" && phase === "result") {
+    if (phase === "result") {
       const timeout = setTimeout(() => {
         navigate("/thankyou", {
           replace: true,
           state: {
             points: finalStatsRef.current.points,
             time: finalStatsRef.current.time,
+            totalPoints: finalStatsRef.current.totalPoints,
+            totalTime: finalStatsRef.current.totalTime,
+            result,
+            mode,
+            code,
+            characterId,
           },
         });
-      }, 2600); // hold the result screen long enough to actually see the
+      }, 2600); // hold the pin pose long enough to actually see the
       // win/lose silhouette animation before jumping to the thank-you page
 
       return () => clearTimeout(timeout);
     }
-  }, [mode, phase, navigate]);
-
-  const handleRematch = useCallback(() => {
-    meterRef.current = 0;
-    playerScoreRef.current = 0;
-    opponentScoreRef.current = 0;
-    reportedRef.current = false;
-    pinLatchRef.current = 0;
-    sceneRef.current?.reset();
-    setResult(null);
-    setCountdown(3);
-    setPhase("countdown");
-  }, []);
-
-  const handleExit = useCallback(() => {
-    navigate("/thankyou", {
-      replace: true,
-      state: {
-        points: finalStatsRef.current.points,
-        time: finalStatsRef.current.time,
-      },
-    });
-  }, [navigate]);
+  }, [mode, phase, navigate, code, characterId, result]);
 
   const meterPct = ((hud.meter + 100) / 200) * 100; // 0..100 (50 = dead even)
   const fillLeft = Math.min(50, meterPct);
@@ -570,23 +532,18 @@ export default function Battle({ mode }) {
   const meterCritical = pinPct >= 75;
   const leadColor = leadSide === "opponent" ? OPPONENT_COLOR : PLAYER_COLOR;
 
-  const resultMsg =
-    result === "win"
-      ? mode === "solo"
-        ? `You overpowered ${character.fighter}!`
-        : `You overpowered ${opponentName}!`
-      : mode === "solo"
-      ? `${character.fighter} was too strong this time.`
-      : `${opponentName} pushed through.`;
-
-  // hold the whole battle UI back until the "already played" check resolves
-  // (a matching report redirects to /thankyou instead)
-  if (!reportChecked) {
-    return <div className="aoa-battle" style={battleStyle} />;
-  }
+  // tremble the ARM ONLY once the meter is in the critical near-pin zone --
+  // the arena/camera stay fixed (see .aoa-battle-intense in arena.css, which
+  // now only does a small fixed zoom, no shake)
+  useEffect(() => {
+    sceneRef.current?.setCriticalShake(phase === "playing" && meterCritical);
+  }, [phase, meterCritical]);
 
   return (
-    <div className="aoa-battle" style={battleStyle}>
+    <div
+      className={`aoa-battle${phase === "playing" && meterCritical ? " aoa-battle-intense" : ""}`}
+      style={battleStyle}
+    >
       {phase === "matchup" && (
         <MatchupIntro
           opponentName={mode === "solo" ? character.name : opponentName}
@@ -617,6 +574,7 @@ export default function Battle({ mode }) {
                 <div className="aoa-score-value">{hud.opponent}</div>
               </div>
             </div>
+            <div className="aoa-meter-label">Power Meter</div>
             <div
               className={`aoa-meter-row lead-${leadSide}${meterCritical ? " is-critical" : ""}`}
               style={{ "--lead-color": leadColor }}
@@ -627,10 +585,16 @@ export default function Battle({ mode }) {
                 <div className="aoa-meter-zone right" />
                 <div className="aoa-meter-ticks" />
                 <div className="aoa-meter-center" />
+                <div className="aoa-meter-vs">VS</div>
                 <div
                   className="aoa-meter-fill"
                   style={{ left: `${fillLeft}%`, width: `${fillWidth}%` }}
                 />
+                {meterCritical && (
+                  <div className="aoa-meter-fire" style={{ left: `${meterPct}%` }}>
+                    🔥
+                  </div>
+                )}
                 <div className="aoa-meter-knob" style={{ left: `${meterPct}%` }} />
               </div>
               <span className="aoa-meter-tag opponent">{opponentName}</span>
@@ -643,7 +607,7 @@ export default function Battle({ mode }) {
 
         {(phase === "countdown" || phase === "fight") && (
           <div className={`aoa-countdown ${phase === "countdown" ? "aoa-countdown-ready" : "aoa-countdown-fight"}`}>
-            {phase === "countdown" ? "READY" : "FIGHT!"}
+            {phase === "countdown" ? (countdown > 0 ? countdown : "GO!") : "FIGHT!"}
           </div>
         )}
 
@@ -653,7 +617,11 @@ export default function Battle({ mode }) {
               <button
                 ref={powerBtnRef}
                 className="aoa-power-btn"
-                style={powerBtnStyle}
+                style={{
+                  ...powerBtnStyle,
+                  backgroundImage: `url(${(process.env.PUBLIC_URL || "")}/img/powerbtn.png)`,
+                }}
+                aria-label="Power"
                 onPointerDown={(e) => {
                   // prevent the browser's synthetic-click / touch-delay
                   // pipeline from adding lag or double-firing on mobile --
@@ -661,9 +629,7 @@ export default function Battle({ mode }) {
                   e.preventDefault();
                   handleTap();
                 }}
-              >
-                POWER
-              </button>
+              />
               <div className="aoa-tap-hint">Tap the button — or the clashing fists — as fast as you can</div>
             </>
           )}
@@ -677,25 +643,6 @@ export default function Battle({ mode }) {
         <div className="aoa-countdown aoa-countdown-start aoa-countdown-overlay">START!</div>
       )}
 
-      {phase === "result" && (
-        <div className="aoa-result-overlay">
-          <div className={`aoa-result-title ${result}`}>{result === "win" ? "YOU WIN" : "YOU LOSE"}</div>
-          <div className="aoa-result-score">
-            {hud.player} — {hud.opponent}
-          </div>
-          <div className="aoa-result-msg">{resultMsg}</div>
-          {mode === "solo" && (
-            <div className="aoa-result-actions">
-              <button className="aoa-btn aoa-btn-primary" style={powerBtnStyle} onClick={handleRematch}>
-                Rematch
-              </button>
-              <button className="aoa-btn aoa-btn-ghost" onClick={handleExit}>
-                Exit
-              </button>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

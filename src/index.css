@@ -5,6 +5,11 @@
   --ui-color-2: #fa6321;
   --option-color: #fb9905;
   --option-text-color: #ffffff;
+  /* Shared button background art (public/img/buttonbg.png) used across all
+     page buttons so every CTA/back/option button reads as one family.
+     Value is set at runtime in index.js (via process.env.PUBLIC_URL) since
+     css-loader can't resolve an absolute /public path from within src CSS. */
+  --btn-bg-image: none;
 }
 
 code {
@@ -17,6 +22,8 @@ html, body, #root {
   padding: 0;
   width: 100%;
   /* height: 100%; */
+  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 body {

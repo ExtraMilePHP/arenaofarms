@@ -43,7 +43,13 @@ export default class ArmWrestleScene {
     this.width = container.clientWidth || 1;
     this.height = container.clientHeight || 1;
     this.sceneScale = this._computeSceneScale(this.width);
-    this.desktopUpShift = this.width < 768 ? 0 : -0.08;
+    this.desktopUpShift = this._computeUpShift(this.width);
+    // turned well round so the two arms line up front-to-back (they read as one
+    // line into the shot) and the near upper arm/shoulder faces the camera.
+    // Set here (before _buildScene) so the table can be rotated to match it --
+    // see _buildScene's table/legs, which used to sit axis-aligned under a
+    // yawed arm and read as diagonal against it.
+    this.armsBaseYaw = Math.PI / 2.6; // ~69 deg
 
     this.scene = new THREE.Scene();
     // light blue haze, not a dark fog — the vivid gradient backdrop comes
@@ -79,6 +85,24 @@ export default class ArmWrestleScene {
     // transparent — the vivid gradient + glow backdrop is painted in CSS
     // behind the canvas (see .aoa-battle in arena.css)
     this.renderer.setClearColor(0x000000, 0);
+    // Without tone mapping (the three.js default), any lit pixel above 1.0
+    // hard-clips to flat white instead of rolling off -- and the point
+    // lights below are tuned as physically-correct candela values sitting
+    // very close to a small object, so large parts of the arm/table were
+    // blowing straight past 1.0. That's what read as the arm's skin
+    // texture "not showing properly" (a washed-out white silhouette
+    // instead of visible detail). ACES rolls those highlights off instead
+    // of clipping them, so the base color texture stays visible even in
+    // brightly lit areas.
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.0;
+    // soft shadows so the arm actually grounds itself on the table instead
+    // of looking pasted on with flat, shadowless lighting -- see the arm's
+    // shadow casting in ArmWrestleRig (_ingest sets castShadow/receiveShadow
+    // on every mesh already) and the table/topLight wiring below
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(this.renderer.domElement);
 
     // how far the whole arm + table sit above their old height -- lifts the
@@ -125,12 +149,6 @@ export default class ArmWrestleScene {
       (this.elbowLeft.z + this.elbowRight.z) / 2 + 0.15
     );
     this.armsBaseRoll = 0;
-    // turned well round so the two arms line up front-to-back (they read as one
-    // line into the shot) and the near upper arm/shoulder faces the camera.
-    // Held just short of a full 90deg -- at 90 the elbow line points straight
-    // at the camera and the forearm fold rolls the fists sideways instead of
-    // folding them down toward the table.
-    this.armsBaseYaw = Math.PI / 2.6; // ~69 deg
     // Full forearm bend = the 100% meter position. Kept at ~55° rather than a
     // full ~82° fold: past ~60° the single forearm->elbow joint has to absorb
     // the entire rotation and the skin shears badly across the clasp ("melted
@@ -181,36 +199,56 @@ export default class ArmWrestleScene {
 
     // Lighting — cool blue-teal wash matching the CSS gradient backdrop.
     // NOTE: modern three.js (r155+) always uses physically-correct light
-    // units (candela for point/spot lights), so old "legacy" intensity
-    // values read as barely lit -- a neutral white key light and boosted
-    // point/spot intensities keep the arms' texture readable instead of a
-    // near-black silhouette.
-    this.ambient = new THREE.AmbientLight(0x2a4a66, 1.4);
+    // units (candela for point/spot lights). These used to be cranked way
+    // up (point lights at 55-60) to compensate, but with NO tone mapping on
+    // the renderer that just hard-clipped most of the arm to flat white --
+    // the actual cause of the arm's skin texture "not showing properly".
+    // Now that the renderer applies ACES tone mapping (see the
+    // WebGLRenderer setup above), intensities are tuned back down to values
+    // that land near a sensible exposure instead of blowing past it.
+    //
+    // A flat AmbientLight used to be the only light reaching the ring/table
+    // away from the two close-range point lights, so the arena read as dim
+    // and flat everywhere except right around the arm. A HemisphereLight
+    // gives the whole scene a natural sky-to-ground gradient (cool blue from
+    // "above the ring lights", a warm bounce from "off the canvas") instead
+    // of one uniform flat tint.
+    this.hemiLight = new THREE.HemisphereLight(0x9fd3ff, 0x2a1e12, 1.1);
+    scene.add(this.hemiLight);
+
+    // small residual ambient so shadow cores never crush to pure black
+    this.ambient = new THREE.AmbientLight(0x2a4a66, 0.35);
     scene.add(this.ambient);
 
     // neutral white now (was tinted player/opponent color) -- that colored
     // the arm's own shaded side blue/red instead of a natural shadow;
     // intensity still swings with dominance in _animate, just no color tint
-    this.playerLight = new THREE.PointLight(0xffffff, 55, 12);
+    this.playerLight = new THREE.PointLight(0xffffff, 14, 12);
     this.playerLight.position.set(-2.6, 2.6, 2.4);
     scene.add(this.playerLight);
 
-    this.opponentLight = new THREE.PointLight(0xffffff, 55, 12);
+    this.opponentLight = new THREE.PointLight(0xffffff, 14, 12);
     this.opponentLight.position.set(2.6, 2.6, 2.4);
     scene.add(this.opponentLight);
 
-    this.rimLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    this.rimLight = new THREE.DirectionalLight(0xffffff, 1.0);
     this.rimLight.position.set(0, 4, -3);
     scene.add(this.rimLight);
 
     // neutral white key light so the arms' actual texture reads through,
     // rather than only the cool blue-teal ambient + colored rim lights
-    // tinting it dark and muddy
-    this.keyLight = new THREE.PointLight(0xfff2e0, 60, 14);
+    // tinting it dark and muddy. Casts the main shadow so the arm/table
+    // ground themselves instead of looking pasted on.
+    this.keyLight = new THREE.PointLight(0xfff2e0, 16, 14);
     this.keyLight.position.set(0, 4, 3.2);
+    this.keyLight.castShadow = true;
+    this.keyLight.shadow.mapSize.set(1024, 1024);
+    this.keyLight.shadow.camera.near = 0.5;
+    this.keyLight.shadow.camera.far = 12;
+    this.keyLight.shadow.bias = -0.0015;
     scene.add(this.keyLight);
 
-    const topLight = new THREE.SpotLight(0xffffff, 25, 12, Math.PI / 4, 0.6);
+    const topLight = new THREE.SpotLight(0xffffff, 7, 12, Math.PI / 4, 0.6);
     topLight.position.set(0, 5, 1.5);
     topLight.target.position.set(0, 1.2, 0);
     scene.add(topLight, topLight.target);
@@ -249,8 +287,11 @@ export default class ArmWrestleScene {
     // is now a neutral warm tone (matching the table body) instead of the
     // ring-accent cyan/blue, which was reading as a mismatched flat blue
     // patch sitting inside the arena rather than part of the table.
+    // square top (per reference: a square podium instead of the old long
+    // rectangular slab) -- sized off the wider dimension so the arm still
+    // has full clearance along its length
     const tableWidth = 3.2;
-    const tableDepth = 1.55;
+    const tableDepth = tableWidth;
     const tableThickness = 0.5;
     // the arm model's lowest geometry (elbow undersides) sits at
     // armsAnchor.y (= elbowMid + 0.32 + armLift). Put the table top a touch
@@ -272,9 +313,14 @@ export default class ArmWrestleScene {
       metalness: 0.35,
       emissive: 0x110a1a,
     });
+    // rotate the table to match the arm rig's own yaw (armsBaseYaw) -- the
+    // table used to stay axis-aligned under the yawed arm and read as sitting
+    // diagonally across it instead of squared up under the hands
     this.table = new THREE.Mesh(tableGeo, tableMat);
     this.table.scale.setScalar(this.sceneScale);
+    this.table.rotation.y = this.armsBaseYaw;
     this.table.position.set(0, tableTopY - tableThickness / 2, tableCenterZ);
+    this.table.receiveShadow = true;
     scene.add(this.table);
 
     const padGeo = new THREE.BoxGeometry(tableWidth - 0.25, 0.06, tableDepth - 0.25);
@@ -287,7 +333,9 @@ export default class ArmWrestleScene {
     });
     this.tablePad = new THREE.Mesh(padGeo, padMat);
     this.tablePad.scale.setScalar(this.sceneScale);
+    this.tablePad.rotation.y = this.armsBaseYaw;
     this.tablePad.position.set(0, tableTopY + 0.03, tableCenterZ);
+    this.tablePad.receiveShadow = true;
     scene.add(this.tablePad);
 
     // legs run all the way down from the table's underside to the actual
@@ -303,14 +351,19 @@ export default class ArmWrestleScene {
     // is known -- the pin must land flat ON the surface.
     this.tableThickness = tableThickness;
     this.tableLegs = [];
+    const yaw = this.armsBaseYaw;
     [
       [tableWidth / 2 - 0.25, tableDepth / 2 - 0.25],
       [-(tableWidth / 2 - 0.25), tableDepth / 2 - 0.25],
       [tableWidth / 2 - 0.25, -(tableDepth / 2 - 0.25)],
       [-(tableWidth / 2 - 0.25), -(tableDepth / 2 - 0.25)],
     ].forEach(([x, z]) => {
+      // rotate each leg's offset the same amount as the table top (yaw) so
+      // they land under its corners instead of the old axis-aligned rectangle
+      const rx = x * Math.cos(yaw) + z * Math.sin(yaw);
+      const rz = -x * Math.sin(yaw) + z * Math.cos(yaw);
       const leg = new THREE.Mesh(legGeo, legMat);
-      leg.position.set(x, tableBottomY - legHeight / 2, tableCenterZ + z);
+      leg.position.set(rx, tableBottomY - legHeight / 2, tableCenterZ + rz);
       scene.add(leg);
       this.tableLegs.push(leg);
     });
@@ -450,7 +503,6 @@ export default class ArmWrestleScene {
         });
 
         this._seatArmOnTable();
-        this._buildSideTints();
       })
       .catch((err) => console.warn("ArmWrestleScene: failed to load riggedarm.glb", err));
   }
@@ -510,62 +562,6 @@ export default class ArmWrestleScene {
   }
 
 
-  /**
-   * Faint translucent colored "sleeves" hugging each forearm (elbow -> clasp):
-   * the player color on the LEFT arm, the opponent color on the RIGHT, so it's
-   * obvious at a glance which arm is yours. Purely cosmetic -- they're tracked
-   * to the bones every frame in _updateSideTints so they follow the fold.
-   */
-  _buildSideTints() {
-    if (!this.armRig) return;
-    const hub = this.armRig.getBone(ARM_BONES.claspHub);
-    const elbowL = this.armRig.getBone(ARM_BONES.left.elbow);
-    const elbowR = this.armRig.getBone(ARM_BONES.right.elbow);
-    if (!hub || !elbowL || !elbowR) return;
-
-    const make = (color) => {
-      const mat = new THREE.MeshBasicMaterial({
-        color,
-        transparent: true,
-        opacity: 0.22,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      });
-      const mesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.17, 0.13, 1, 14, 1, true),
-        mat
-      );
-      mesh.visible = this.armsVisible;
-      mesh.renderOrder = 2;
-      this.scene.add(mesh);
-      return mesh;
-    };
-
-    this._sideTints = [
-      { mesh: make(this.playerColor), from: elbowL, to: hub },
-      { mesh: make(this.opponentColor), from: elbowR, to: hub },
-    ];
-    this._tintA = new THREE.Vector3();
-    this._tintB = new THREE.Vector3();
-    this._tintUp = new THREE.Vector3(0, 1, 0);
-  }
-
-  _updateSideTints() {
-    if (!this._sideTints) return;
-    for (const t of this._sideTints) {
-      t.mesh.visible = this.armsVisible;
-      if (!this.armsVisible) continue;
-      t.from.getWorldPosition(this._tintA);
-      t.to.getWorldPosition(this._tintB);
-      const dir = this._tintB.clone().sub(this._tintA);
-      const len = dir.length() || 1;
-      dir.normalize();
-      t.mesh.position.copy(this._tintA).add(this._tintB).multiplyScalar(0.5);
-      t.mesh.quaternion.setFromUnitVectors(this._tintUp, dir);
-      t.mesh.scale.set(1, len * 0.92, 1);
-    }
-  }
-
   /** Called every frame from React with the current meter (-100..100). */
   setMeter(meter) {
     this.meter = Math.max(-100, Math.min(100, meter));
@@ -586,6 +582,16 @@ export default class ArmWrestleScene {
   setShowcase(showcase) {
     this.showcase = showcase;
     this._setRingFrontHidden(!showcase);
+  }
+
+  /**
+   * Toggles a small tremble on the ARM MODEL ONLY (not the camera/arena --
+   * those stay perfectly still) once the meter enters the critical near-pin
+   * zone. Applied as a tiny per-frame jitter on top of armsGroup's normal
+   * position in _animate.
+   */
+  setCriticalShake(active) {
+    this.criticalShake = !!active;
   }
 
   /**
@@ -643,9 +649,13 @@ export default class ArmWrestleScene {
     this.renderer.domElement.releasePointerCapture?.(e.pointerId);
   }
 
-  /** Call on every tap to trigger shake / glow feedback. */
-  pulseTap(strength = 1) {
-    this.shakeIntensity = Math.min(this.shakeIntensity + 0.05 * strength, 0.35);
+  /**
+   * Call on every tap to trigger a brief glow pulse. No longer shakes the
+   * camera/arena on every tap -- that made rapid tapping read as the whole
+   * arena rattling; the shake is reserved for the win/lose slam only (see
+   * triggerWin/triggerLose).
+   */
+  pulseTap() {
     this.tapPulse = 1;
   }
 
@@ -742,6 +752,15 @@ export default class ArmWrestleScene {
     return width < 768 ? 0.62 : 0.9;
   }
 
+  // single source of truth for the desktop/mobile vertical anchor offset --
+  // constructor and _onResize used to compute this with two different
+  // formulas (-0.08 vs -0.14), which made the arm/table jump or read as
+  // "floating" relative to the table whenever the window resized (e.g. a
+  // mobile orientation change)
+  _computeUpShift(width) {
+    return width < 768 ? 0 : -0.08;
+  }
+
   _computeCameraZ(width, height) {
     // slight zoom-in on top of the base framing -- <1 pulls the camera closer
     const zoom = 0.92;
@@ -760,7 +779,7 @@ export default class ArmWrestleScene {
     this.height = this.container.clientHeight || 1;
     this.sceneScale = this._computeSceneScale(this.width);
     this.baseCameraZ = this._computeCameraZ(this.width, this.height);
-    this.desktopUpShift = this.width < 768 ? 0 : -0.14;
+    this.desktopUpShift = this._computeUpShift(this.width);
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(this.width, this.height);
@@ -838,6 +857,18 @@ export default class ArmWrestleScene {
       this.armsGroup.position.copy(this.armsAnchor);
       this.armsGroup.rotation.set(0, this.armsBaseYaw, this.armsBaseRoll);
 
+      // small trembling tremor on the ARM ONLY (camera/table/ring never
+      // move) once the meter is in the critical near-pin zone -- layered
+      // sine waves at different frequencies read as a natural, fine shake
+      // rather than a jittery random flicker, and stay tiny enough to never
+      // visibly separate the fists from the table
+      if (this.criticalShake && !this.resultMode) {
+        const t = this.clock.elapsedTime;
+        const amp = 0.012;
+        this.armsGroup.position.x += (Math.sin(t * 37) + Math.sin(t * 53) * 0.5) * amp;
+        this.armsGroup.position.y += (Math.sin(t * 41 + 1.3) + Math.sin(t * 29) * 0.5) * amp * 0.6;
+      }
+
       // at the pin, lower the whole planted arm so the clasped fists come
       // down flat onto the table (the fold angle alone stops short of the
       // surface to keep the wrist/finger seam from shearing -- see
@@ -852,9 +883,6 @@ export default class ArmWrestleScene {
       if (this._handBoneL) {
         this._handBoneL.getWorldPosition(this.claspPos);
       }
-
-      // keep the player/opponent forearm color sleeves on the bones
-      this._updateSideTints();
     }
 
     // dominance-based lighting/brightness -- kept to a much smaller swing
@@ -864,8 +892,8 @@ export default class ArmWrestleScene {
     // of readable skin. This still brightens the winning side's light
     // slightly, just nowhere near enough to blot out the model's own color.
     const dominance = this.displayMeter / 100; // -1..1
-    this.playerLight.intensity = 50 + Math.max(0, dominance) * 18;
-    this.opponentLight.intensity = 50 + Math.max(0, -dominance) * 18;
+    this.playerLight.intensity = 14 + Math.max(0, dominance) * 5;
+    this.opponentLight.intensity = 14 + Math.max(0, -dominance) * 5;
 
     // close-match tension: slight extra shake near center (no more rapid
     // pulsing zoom here -- that constant in/out wobble while tapping/near a
@@ -920,11 +948,13 @@ export default class ArmWrestleScene {
 
     this.camera.lookAt(0, this.cameraLookY, 0);
 
-    // result mode overrides
+    // result mode overrides -- dims the hemisphere fill (now the scene's main
+    // light source) rather than the small residual ambient, so a loss still
+    // visibly darkens the whole arena instead of an imperceptible dip
     if (this.resultMode === "lose") {
-      this.ambient.intensity = Math.max(0.25, this.ambient.intensity - dt * 0.4);
+      this.hemiLight.intensity = Math.max(0.4, this.hemiLight.intensity - dt * 0.5);
     } else {
-      this.ambient.intensity += (0.7 - this.ambient.intensity) * dt * 2;
+      this.hemiLight.intensity += (1.1 - this.hemiLight.intensity) * dt * 2;
     }
 
     // particle burst update
@@ -958,12 +988,6 @@ export default class ArmWrestleScene {
     this.renderer.domElement.removeEventListener("pointermove", this._onPointerMove);
     window.removeEventListener("pointerup", this._onPointerUp);
     window.removeEventListener("pointercancel", this._onPointerUp);
-    this._sideTints?.forEach((t) => {
-      this.scene.remove(t.mesh);
-      t.mesh.geometry.dispose();
-      t.mesh.material.dispose();
-    });
-    this._sideTints = null;
     this.armRig?.dispose();
     this.armRig = null;
     this.armController = null;

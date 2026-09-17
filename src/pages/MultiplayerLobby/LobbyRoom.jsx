@@ -56,7 +56,7 @@ function deriveGuestFromUser(u) {
 }
 
 function buildExtramileJoinUrl(isGuest, gameId, sessionId) {
-  alert(`isGuest: ${isGuest}`);
+  // alert(`isGuest: ${isGuest}`);
   const base = (isGuest ? EXTRAMILE_GUEST_JOIN : EXTRAMILE_SIGNUP).replace(/\/$/, "");
   const u = new URL(base);
   u.searchParams.set("gameId", String(gameId ?? ""));

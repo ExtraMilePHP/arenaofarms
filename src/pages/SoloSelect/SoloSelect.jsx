@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CHARACTERS from "../../data/characters";
@@ -15,17 +15,10 @@ import { useThemeColors } from '../../functions/useThemeColors';
  */
 function OpponentCard({ c, index, onSelect, themeColors }) {
   const ref = useRef(null);
-  const { buttonColor, buttonTextColor, buttonShadowColor } = themeColors || {};
-  // When the theme defines a button color, the opponent cards follow it (bg +
-  // label + dark box-shadow) like every other primary button in the app; the
-  // per-fighter color is kept on the avatar so each opponent stays identifiable.
-  const themedCardStyle = buttonColor
-    ? {
-        background: buttonColor,
-        ...(buttonTextColor ? { color: buttonTextColor } : null),
-        ...(buttonShadowColor ? { boxShadow: `0 8px 0 ${buttonShadowColor}` } : null),
-      }
-    : null;
+  const { buttonTextColor } = themeColors || {};
+  const themedCardStyle = {
+    ...(buttonTextColor ? { color: buttonTextColor } : null),
+  };
 
   const handleMove = (e) => {
     const el = ref.current;
@@ -58,7 +51,7 @@ function OpponentCard({ c, index, onSelect, themeColors }) {
         onMouseLeave={handleLeave}
         onClick={onSelect}
       >
-        <span className="aoa-char-avatar" style={{ background: c.color }} />
+
         <span className="aoa-char-info">
           <div className="aoa-char-name">{c.name}</div>
           <div className="aoa-char-fighter" style={buttonTextColor ? { color: buttonTextColor } : undefined}>{c.fighter}</div>

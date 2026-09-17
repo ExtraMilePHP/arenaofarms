@@ -77,7 +77,7 @@
 }
 
 .aoa-menu-actions-row .aoa-btn-lg {
-  padding: 1.35rem 2.25rem;
+    padding: 2.35rem 2.25rem;
   font-size: 1.25rem;
   min-width: 220px;
 }
@@ -108,25 +108,13 @@
   }
 }
 
-.aoa-btn-primary-fill {
-  background-color: var(--btn-bg, #e8432f);
-  color: var(--btn-color, #fff);
-  box-shadow: var(--btn-shadow, 0 8px 0 #8a1717);
-}
-.aoa-btn-primary-fill:active { box-shadow: 0 2px 0 #8a1717; }
-
-/* chunky "gummy-pill" 3D game buttons -- a solid un-blurred bottom lip
-   (box-shadow, same border-radius as the button so it reads as a rounded
-   puck underneath) gives the extruded look; a glossy top highlight sells
-   the rounded plastic/candy surface. Hover lifts the button off its base
-   (taller lip, more visible underside); pressing collapses the lip and
-   drops the button flush into it for a tactile push (mouse :active and
-   touch alike). */
+/* chunky "gummy-pill" 3D game buttons -- buttonbg.png supplies the metal
+   beveled body/border. */
 .aoa-btn {
   position: relative;
   border: none;
-  border-radius: 999px;
-  padding: 1rem 2rem;
+  border-radius: 14px;
+  padding: 2rem 2rem;
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: 0.5px;
@@ -135,49 +123,34 @@
   text-align: center;
   overflow: hidden;
   transform: translateY(0);
-  transition: transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.12s ease;
+  background-color: transparent;
+  background-image: var(--btn-bg-image);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
+  transition: transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.12s ease;
 }
-.aoa-btn::before {
-  /* glossy top-half sheen */
+/* .aoa-btn::before {
+
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 55%);
   pointer-events: none;
-}
+} */
 .aoa-btn:hover { transform: translateY(-3px); }
 .aoa-btn:active { transform: translateY(4px); }
 .aoa-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.aoa-btn-primary {
-  /* background: linear-gradient(135deg, #ff7a1f, #e8432f);
-  box-shadow: 0 8px 0 #8a1717; */
-}
-.aoa-btn-primary:hover { box-shadow: 0 11px 0 #8a1717; }
-.aoa-btn-primary:active { box-shadow: 0 2px 0 #8a1717; }
-
-.aoa-btn-secondary {
-    /* background: linear-gradient(135deg, #ff7a1f, #e8432f);
-    box-shadow: 0 8px 0 #8a1717; */
-}
-.aoa-btn-secondary:hover { box-shadow: 0 11px 0 #8a1717; }
-.aoa-btn-secondary:active { box-shadow: 0 2px 0 #8a1717; }
-
 .aoa-btn-ghost {
-  background-color: var(--btn-bg, rgba(255, 255, 255, 0.1));
-  color: var(--btn-color, #fff);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: var(--btn-shadow, 0 8px 0 rgba(0, 0, 0, 0.3));
+  border: none;
 }
-.aoa-btn-ghost:active { box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3); }
 
-/* Hover keeps each button's own color -- just lifts/scales a bit more and
-   adds a glow, no background/border color swap. */
 .aoa-btn-primary-fill:hover,
 .aoa-btn-ghost:hover {
   transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 11px 0 rgba(0, 0, 0, 0.3), 0 14px 26px rgba(0, 0, 0, 0.25);
 }
 
 .aoa-card {
@@ -234,27 +207,25 @@
   position: fixed;
   top: 1rem;
   left: 1rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background-color: rgba(0, 0, 0, 0.45);
+  border: none;
   color: #fff;
-  border-radius: 999px;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
   padding: 0.55rem 1rem;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 700;
   z-index: 20;
   transform: translateY(0);
-  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), 0 10px 16px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), background 0.15s ease;
+  transition: transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.15s ease;
 }
 .aoa-back:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.09));
-  box-shadow: 0 7px 0 rgba(0, 0, 0, 0.35), 0 14px 20px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
 }
 .aoa-back:active {
   transform: translateY(3px);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 /* Character select ------------------------------------------------------ */
@@ -329,6 +300,7 @@
   cursor: pointer;
   text-align: left;
   color: #fff;
+     padding: 37px 92px;
 }
 
 /* exact same "gummy-pill" recipe as .aoa-btn / .aoa-btn-primary -- a solid
@@ -342,12 +314,15 @@
   position: relative;
   transform-style: preserve-3d;
   transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(0);
-  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.12s ease;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 70%, white 30%), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black 30%));
-  box-shadow: 0 8px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.12s ease;
+  background-color: transparent;
+  background-image: var(--btn-bg-image);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-.aoa-char-card-3d::before {
-  /* glossy top-half sheen, same as .aoa-btn, plus a sheen that follows the cursor */
+/* .aoa-char-card-3d::before {
+
   content: "";
   position: absolute;
   inset: 0;
@@ -356,14 +331,12 @@
     radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.25), transparent 60%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%);
   pointer-events: none;
-}
+} */
 .aoa-char-card-3d:hover {
   transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px);
-  box-shadow: 0 11px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
 }
 .aoa-char-card-3d:active {
   transform: perspective(900px) rotateX(0deg) rotateY(0deg) translateY(4px) scale(0.98);
-  box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
 }
 
 .aoa-char-avatar {
@@ -480,17 +453,15 @@
     font-weight: 700;
     color: #18161d;
     transform: translateY(0);
-    transition: transform 0.1s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.1s ease, background 0.15s ease, color 0.15s ease;
-    box-shadow: 0 4px 0 #7a6363, 0 10px 18px rgba(255, 77, 77, 0.3);
+    transition: transform 0.1s cubic-bezier(0.3, 1.6, 0.5, 1), background 0.15s ease, color 0.15s ease;
 }
 .aoa-tab:active { transform: translateY(3px); }
 .aoa-tab.active {
   background: linear-gradient(135deg, #ff6b5c, #ff8a3e);
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 4px 0 #a11f1f, 0 10px 18px rgba(255, 77, 77, 0.3);
 }
-.aoa-tab.active:active { box-shadow: 0 1px 0 #a11f1f, 0 4px 10px rgba(255, 77, 77, 0.25); }
+.aoa-tab.active:active { }
 .aoa-waiting-pulse {
   display: inline-block;
   width: 10px;
@@ -535,9 +506,11 @@
   position: relative;
   width: 100%;
   height: 100vh;
-  height: 100dvh;
-  min-height: 100svh;
+  height: 94dvh;
+  min-height: 94svh;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
   /* background: radial-gradient(ellipse at 50% 15%, #6fe0ff 0%, #2196d8 32%, #0d4f8c 62%, #062544 100%); */
 }
 /* soft bokeh glow blobs behind the (transparent) 3D canvas, matching the
@@ -571,6 +544,24 @@
   inset: 0;
   z-index: 1;
   touch-action: none;
+  transition: scale 1.6s ease-out;
+}
+/* item 2/4: a small, FIXED zoom as either side nears a pin -- the arena
+   itself never moves/shakes (that used to be a `translate` shake on this
+   whole layer, which read as the entire arena rattling); only the arm model
+   vibrates now, driven inside ArmWrestleScene (see setCriticalShake), so the
+   camera/table/ring all stay perfectly still while the fists tremble. */
+.aoa-battle-intense .aoa-canvas-layer {
+  scale: 1.06;
+  animation: aoa-intense-pulse 1.1s ease-in-out infinite alternate;
+}
+@keyframes aoa-intense-pulse {
+  from { filter: saturate(1) brightness(1); }
+  to { filter: saturate(1.18) brightness(1.05); }
+}
+.aoa-battle-intense::before,
+.aoa-battle-intense::after {
+  animation: aoa-glow-float 2.5s ease-in-out infinite;
 }
 .aoa-hud {
   position: absolute;
@@ -611,6 +602,17 @@
 .aoa-score-box.player .aoa-score-value { color: #3ea6ff; }
 .aoa-score-box.opponent .aoa-score-value { color: #ff4d4d; }
 
+.aoa-meter-label {
+  text-align: center;
+  width: min(94vw, 640px);
+  margin: 0.2rem auto 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
 .aoa-meter-row {
   --lead-color: #3ea6ff;
   display: grid;
@@ -623,7 +625,6 @@
   row-gap: 0.35rem;
   width: min(94vw, 640px);
   margin: 0.3rem auto 0;
-  transform: translateY(-12px);
 }
 .aoa-meter-tag {
   display: block;
@@ -734,6 +735,37 @@
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
   transform: translateX(-50%);
   z-index: 3;
+}
+/* "VS" mark riding the dead-center line of the track */
+.aoa-meter-vs {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  font-size: 0.62rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+/* item 4: flame riding the leading edge once either side crosses into the
+   critical (near-pin) zone of the meter */
+.aoa-meter-fire {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  font-size: 1.1rem;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(255, 140, 0, 0.9));
+  animation: aoa-fire-flicker 0.25s ease-in-out infinite alternate;
+}
+@keyframes aoa-fire-flicker {
+  from { transform: translate(-50%, -50%) scale(0.9) rotate(-4deg); }
+  to { transform: translate(-50%, -55%) scale(1.15) rotate(4deg); }
 }
 /* leading-edge puck */
 .aoa-meter-knob {
@@ -913,9 +945,8 @@
 }
 
 /* same "gummy-pill" 3D recipe as .aoa-char-card-3d -- solid gradient-filled
-   body, glossy top sheen, a solid (un-blurred) drop shadow standing in for
-   depth, lift on hover, press flush + shadow collapse on tap/click -- just
-   round and red instead of a card. Made smaller than before per request. */
+   body, glossy top sheen, lift on hover, and press feedback on tap/click.
+   Made smaller than before per request. */
 .aoa-power-btn {
   position: relative;
   width: clamp(84px, 20vw, 120px);
@@ -923,8 +954,10 @@
   border-radius: 50%;
   border: none;
   --accent: #ff4d4d;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 70%, white 30%), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black 30%));
-  box-shadow: 0 8px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #fff;
   font-weight: 900;
   font-size: 0.95rem;
@@ -933,7 +966,7 @@
   user-select: none;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.2s cubic-bezier(0.3, 1.6, 0.5, 1);
+  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1);
   transform: translateY(0);
   margin-bottom: 0.15rem;
   z-index: 2;
@@ -951,16 +984,14 @@
 }
 .aoa-power-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 11px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
 }
 .aoa-power-btn.tapped,
 .aoa-power-btn:active {
   /* snappier than the default 0.2s bounce -- with rapid tapping the longer
      overshoot transition never fully finished before the next tap, which
      read as the button lagging/not responding cleanly */
-  transition: transform 0.09s ease-out, box-shadow 0.09s ease-out;
+  transition: transform 0.09s ease-out;
   transform: translateY(4px) scale(0.98);
-  box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 55%, black 45%);
 }
 .aoa-tap-hint {
   color: #b9aed0;
@@ -987,6 +1018,18 @@
 }
 @keyframes aoa-fadein { from { opacity: 0; } to { opacity: 1; } }
 
+/* item 2: intense zoom-in punch behind the result title -- the whole overlay
+   scales up from center so the win/lose moment reads as an impact, not just
+   a fade */
+.aoa-result-win,
+.aoa-result-lose {
+  animation: aoa-fadein 0.35s ease, aoa-result-zoom 0.6s cubic-bezier(.2,1,.3,1);
+}
+@keyframes aoa-result-zoom {
+  0% { transform: scale(1.6); }
+  100% { transform: scale(1); }
+}
+
 .aoa-result-title {
   font-size: clamp(2.6rem, 10vw, 4.4rem);
   font-weight: 900;
@@ -996,15 +1039,28 @@
 .aoa-result-title.win {
   color: #3ea6ff;
   text-shadow: 0 0 60px rgba(62, 166, 255, 0.8);
+      font-family: fantasy;
+  animation: aoa-pop 0.5s cubic-bezier(.2,1.4,.4,1), aoa-result-glow 0.7s ease-in-out 0.5s 2 alternate;
 }
 .aoa-result-title.lose {
   color: #ff4d4d;
   text-shadow: 0 0 60px rgba(255, 77, 77, 0.6);
+  animation: aoa-pop 0.5s cubic-bezier(.2,1.4,.4,1) both, aoa-result-shake 0.4s ease 0.5s 2;
+      font-family: fantasy;
 }
 @keyframes aoa-pop {
   0% { transform: scale(0.4); opacity: 0; }
   60% { transform: scale(1.15); opacity: 1; }
   100% { transform: scale(1); }
+}
+@keyframes aoa-result-glow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.6); }
+}
+@keyframes aoa-result-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
 }
 .aoa-result-score { font-size: 1.1rem; color: #e6def2; }
 .aoa-result-msg { color: #b9aed0; max-width: 320px; }
@@ -1080,6 +1136,18 @@
     max-width: 72vw;
     line-height: 1.3;
     text-align: center;
+  }
+  .aoa-meter-label {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+  }
+  .aoa-meter-fire {
+    font-size: 0.85rem;
+  }
+  /* less aggressive zoom on small screens -- the full desktop scale pushed
+     the arm/table past the edges of an already-tight mobile viewport */
+  .aoa-battle-intense .aoa-canvas-layer {
+    scale: 1.04;
   }
 }
 

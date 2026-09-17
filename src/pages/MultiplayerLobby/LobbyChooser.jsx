@@ -131,7 +131,7 @@ export default function LobbyChooser() {
           <div className="aoa-lobby-panel-desc">Challenge your friends, anywhere.</div>
           <button
             className="aoa-btn aoa-btn-primary"
-            style={{ width: "100%", marginTop: "auto", ...buttonStyle }}
+            style={{ width: "80%", margin: "auto auto 0", ...buttonStyle }}
             disabled={busy}
             onClick={handleCreate}
           >
@@ -156,7 +156,7 @@ export default function LobbyChooser() {
           />
           <button
             className="aoa-btn aoa-btn-primary"
-            style={{ width: "100%", ...buttonStyle }}
+            style={{ width: "80%", margin: "0 auto", ...buttonStyle }}
             onClick={handleJoin}
           >
             Join

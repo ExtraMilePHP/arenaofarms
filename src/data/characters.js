@@ -1,11 +1,11 @@
-// Solo opponents — exact values from the Arena of Arms PRD. Do not change.
+// Solo opponents — pressure values raised across the board for a harder game.
 const CHARACTERS = [
   {
     id: "rookie",
     name: "Rookie Grip",
     fighter: 'Karan "Steel Palm" Yadav',
     difficulty: "Easy",
-    pressure: 4, // points lost per second
+    pressure: 6, // points lost per second
     color: "#3ea6ff",
     tagline: "Slow reaction, low resistance.",
   },
@@ -14,7 +14,7 @@ const CHARACTERS = [
     name: "Iron Lock",
     fighter: 'Aditya "Blaze Arm" Nath',
     difficulty: "Medium",
-    pressure: 7,
+    pressure: 11,
     color: "#ff9d3e",
     tagline: "Balanced timing and resistance.",
   },
@@ -23,7 +23,7 @@ const CHARACTERS = [
     name: "Titan Breaker",
     fighter: 'Surya "Storm Grip" Pratap',
     difficulty: "Hard",
-    pressure: 10,
+    pressure: 16,
     color: "#ff4d4d",
     tagline: "Aggressive, fast counter pressure.",
   },

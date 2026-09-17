@@ -25,6 +25,15 @@ import LobbyRoom from './pages/MultiplayerLobby/LobbyRoom';
 import Battle from './pages/Battle/Battle';
 import ArmRigDebug from './pages/Battle/ArmRigDebug';
 
+// Public-folder assets can't be referenced with an absolute url() path from
+// src CSS (css-loader tries to resolve it as a module), so the shared button
+// background art is set on the CSS custom property here instead, where
+// process.env.PUBLIC_URL correctly points at the public folder root.
+document.documentElement.style.setProperty(
+  '--btn-bg-image',
+  `url(${process.env.PUBLIC_URL}/img/buttonbg.png)`
+);
+
 function usePageBackground() {
   const location = useLocation();
   useEffect(() => {
