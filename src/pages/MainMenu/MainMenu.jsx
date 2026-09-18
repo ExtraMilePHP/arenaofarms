@@ -16,6 +16,8 @@ export default function MainMenu() {
     () => (themeData?.logo ? getDvSourceImageUrl(themeData.logo) : null),
     [themeData]
   );
+  const soloEnabled = themeData?.solo_enabled !== false;
+  const multiplayerEnabled = themeData?.multiplayer_enabled !== false;
   useEffect(() => {
     dispatch(setBackButtonUrl("/login?&save=true"));
   }, [status, user]);
@@ -24,12 +26,16 @@ export default function MainMenu() {
     <div className="aoa-root aoa-root-menu" style={textStyle}>
       {logoUrl && <img src={logoUrl} alt="" className="aoa-menu-logo" />}
       <div className="aoa-menu-actions aoa-menu-actions-row">
-        <button className="aoa-btn aoa-btn-ghost aoa-btn-lg" style={buttonStyle} onClick={() => navigate("/arena/solo")}>
-          <i className="fa-solid fa-user" /> Play Solo
-        </button>
-        <button className="aoa-btn aoa-btn-primary-fill aoa-btn-lg" style={buttonStyle} onClick={() => navigate("/arena/lobby")}>
-          <i className="fa-solid fa-users" /> Multiplayer
-        </button>
+        {soloEnabled && (
+          <button className="aoa-btn aoa-btn-ghost aoa-btn-lg" style={buttonStyle} onClick={() => navigate("/arena/solo")}>
+            <i className="fa-solid fa-user" /> Play Solo
+          </button>
+        )}
+        {multiplayerEnabled && (
+          <button className="aoa-btn aoa-btn-primary-fill aoa-btn-lg" style={buttonStyle} onClick={() => navigate("/arena/lobby")}>
+            <i className="fa-solid fa-users" /> Multiplayer
+          </button>
+        )}
       </div>
     </div>
   );

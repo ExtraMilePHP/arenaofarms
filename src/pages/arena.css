@@ -66,7 +66,7 @@
 }
 
 .aoa-menu-actions-row .aoa-btn {
-  flex: 1 1 auto;
+  flex: 0 1 280px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -80,11 +80,14 @@
     padding: 2.35rem 2.25rem;
   font-size: 1.25rem;
   min-width: 220px;
+  max-width: 320px;
 }
 
 @media (max-width: 560px) {
   .aoa-menu-actions-row .aoa-btn-lg {
     min-width: 0;
+    max-width: 320px;
+    width: 100%;
     padding: 1.1rem 1.5rem;
     font-size: 1.05rem;
   }

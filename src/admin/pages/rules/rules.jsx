@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Switch from "react-switch";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "./rules.css";
@@ -77,6 +78,8 @@ const Rules = () => {
   const [buttonTextColor, setButtonTextColor] = useState("#ffffff");
   const [textBgColor, setTextBgColor] = useState("#ffffff");
   const [introPopup, setIntroPopup] = useState("");
+  const [soloEnabled, setSoloEnabled] = useState(true);
+  const [multiplayerEnabled, setMultiplayerEnabled] = useState(true);
 
   useEffect(() => {
     if (currentTheme) dispatch(fetchThemeData({ themeId: currentTheme, isAdmin: true }));
@@ -95,6 +98,8 @@ const Rules = () => {
     );
     setTextBgColor(toColorInputValue(data.text_bg_color ?? data.icon_bg_color ?? "#ffffff"));
     setIntroPopup(String(data.popup ?? "").slice(0, MAX_POPUP_LEN));
+    setSoloEnabled(parseStoredBool(data.solo_enabled, true));
+    setMultiplayerEnabled(parseStoredBool(data.multiplayer_enabled, true));
   }, [data]);
 
   const handleRuleChange = (idx, val) => {
@@ -143,6 +148,10 @@ const Rules = () => {
       return { ok: false, msg: `Intro popup text must be ${MAX_POPUP_LEN} characters or less.` };
     }
 
+    if (!soloEnabled && !multiplayerEnabled) {
+      return { ok: false, msg: "At least one of Solo Player or Multiplayer must be enabled." };
+    }
+
     return {
       ok: true,
       payload: {
@@ -152,6 +161,8 @@ const Rules = () => {
         button_color: buttonColor,
         button_Textcolor: buttonTextColor,
         text_bg_color: textBgColor,
+        solo_enabled: soloEnabled,
+        multiplayer_enabled: multiplayerEnabled,
         // Preserve existing fields that aren't being edited
         landing_page_title: String(data?.landing_page_title ?? "").trim(),
         custom_text_thank_you_page: String(data?.custom_text_thank_you_page ?? "").trim(),
@@ -303,6 +314,30 @@ const Rules = () => {
                   className="themeupdate-color-input rules-php-color-input"
                   value={textBgColor}
                   onChange={(e) => setTextBgColor(e.target.value)}
+                />
+              </div>
+
+              <div className="rules-php-marks-row rules-php-color-row">
+                <label htmlFor="rules-solo-toggle" className="rules-php-marks-label">
+                  Solo Player
+                </label>
+                <Switch
+                  id="rules-solo-toggle"
+                  checked={soloEnabled}
+                  onChange={setSoloEnabled}
+                  onColor="#4caf50"
+                />
+              </div>
+
+              <div className="rules-php-marks-row rules-php-color-row">
+                <label htmlFor="rules-multiplayer-toggle" className="rules-php-marks-label">
+                  Multiplayer
+                </label>
+                <Switch
+                  id="rules-multiplayer-toggle"
+                  checked={multiplayerEnabled}
+                  onChange={setMultiplayerEnabled}
+                  onColor="#4caf50"
                 />
               </div>
             </div>
